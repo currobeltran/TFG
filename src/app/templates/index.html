@@ -50,12 +50,14 @@
             </nav>
     
             <main>
-    
+                {% block central %}
+                    <h2 class="text-center mt-5">Bienvenido a la aplicación</h2>
+                {% endblock %}
             </main>
         </div>
 
-        <footer class="footer container-fluid">
-            <div class="container-fluid">
+        <footer class="footer">
+            <div class="container">
                 <span class="text-muted">Footer</span>
             </div>
         </footer>
