@@ -8,3 +8,6 @@ def buscadorBBDD(request):
 
 def editarBBDD(request):
     return render(request, 'editor.html', {'registrado':True})
+
+def infomasivaBBDD(request):
+    return render(request, 'infomasiva.html', {'registrado':True})
