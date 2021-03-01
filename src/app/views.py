@@ -14,3 +14,6 @@ def infomasivaBBDD(request):
 
 def editaindividual(request):
     return render(request, 'infoindividual.html', {'registrado':True})
+
+def apibuscaBBDD(request):
+    return 0
