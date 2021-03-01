@@ -1,4 +1,5 @@
 from django.db import models
+from django.http import JsonResponse
 
 
 class Asignatura(models.Model):
@@ -69,3 +70,44 @@ class Grupo(models.Model):
     Compartido = models.IntegerField(blank=True)
     Turno = models.CharField(max_length=1, choices=TURNOS_DE_GRUPO)
     GruposReducidos = models.IntegerField()
+
+def ObtenerRegistros(tabla):
+    ret = []
+
+    if tabla == "Asignatura":
+        x = Asignatura.objects.all()
+        for i in x:
+            ret.append(i.Nombre)
+        return ret
+
+    elif tabla == "Área":
+        x = Area.objects.all()
+        for i in x:
+            ret.append(i.Nombre)
+        return ret
+
+    elif tabla == "Mención":
+        x = Mencion.objects.all()
+        for i in x:
+            ret.append(i.Nombre)
+        return ret
+
+    elif tabla == "Título":
+        x = Titulo.objects.all()
+        for i in x:
+            ret.append(i.Nombre)
+        return ret
+
+    elif tabla == "Año Asignatura":
+        x = AñoAsignatura.objects.all()
+        for i in x:
+            ret.append(i.Año)
+        return ret
+
+    elif tabla == "Grupo":
+        x = Grupo.objects.all()
+        for i in x:
+            ret.append(i.Letra)
+        return ret
+
+    return ret
