@@ -1,0 +1,28 @@
+{% extends 'editor.html' %}
+
+{% block formulario %}
+
+<form class="col-6">
+    <div class="row">
+        <label for="selecciontipo" class="col">Elige un tipo de dato</label>
+        <label for="seleccionobjeto" class="col">Elige uno de los datos disponibles</label>
+    </div>
+
+    <div class="row">
+        <select class="form-control mt-3 col" id="selecciontipo">
+            <option>Asignatura</option>
+            <option>Mención</option>
+            <option>Título</option>
+            <option>Área</option>
+            <option>Año asignatura</option>
+            <option>Grupo</option>
+        </select>
+
+        <select class="form-control mt-3 ms-3 col" id="seleccionobjeto">
+            <!-- Aquí se colocará la lista de objetos de un tipo determinado -->
+        </select>
+    </div>
+    
+</form>
+
+{% endblock %}

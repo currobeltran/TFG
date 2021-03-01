@@ -11,3 +11,6 @@ def editarBBDD(request):
 
 def infomasivaBBDD(request):
     return render(request, 'infomasiva.html', {'registrado':True})
+
+def editaindividual(request):
+    return render(request, 'infoindividual.html', {'registrado':True})

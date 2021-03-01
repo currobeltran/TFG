@@ -6,4 +6,5 @@ urlpatterns = [
     path('buscadorBBDD', views.buscadorBBDD, name='buscadorBBDD'),
     path('editorBBDD', views.editarBBDD, name='editorBBDD'),
     path('editormasivo', views.infomasivaBBDD, name='editormasivo'),
+    path('editorindividual', views.editaindividual, name='editorindividual'),
 ]
