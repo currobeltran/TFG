@@ -7,7 +7,7 @@ $(document).ready(function(){
             type: "GET",
             data: {tipo: value},
             success: function(data){
-                let lista = ''
+                let lista = '<option>Crear nuevo elemento</option>'
                 $.each(data, function(i,v){
                     lista += `
                         <option>${v}</option>
