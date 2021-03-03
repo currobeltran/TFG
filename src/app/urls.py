@@ -8,4 +8,5 @@ urlpatterns = [
     path('editormasivo', views.infomasivaBBDD, name='editormasivo'),
     path('editorindividual', views.editaindividual, name='editorindividual'),
     path('api/buscarBBDD', views.apibuscaBBDD, name='buscaBBDD'),
+    path('copiaseguridad',views.copiaSeguridad, name='copiaseguridad')
 ]

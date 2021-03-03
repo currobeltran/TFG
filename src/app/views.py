@@ -21,3 +21,6 @@ def apibuscaBBDD(request):
     x = ObtenerRegistros(request.GET.get('tipo'))
     data = { i:i for i in x }
     return JsonResponse(data)
+
+def copiaSeguridad(request):
+    return render(request, 'copiaseguridad.html', {'registrado':True})

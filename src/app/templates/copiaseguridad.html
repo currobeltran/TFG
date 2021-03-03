@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+
+{% block central %}
+
+<h3 class="mt-4 ms-4">Realización de copia de seguridad</h3>
+
+<form class="col-6 mt-3 ms-4">
+    <div class="form-group">
+        <label for="subirarchivo">Seleccione el formato para realizar la copia de seguridad</label>
+        <select class="form-control mt-2" id="seleccioncopia">
+            <option>Una opcion</option>
+            <option>Otra</option>
+            <option>Y otra mas</option>
+            <option>Todas de prueba</option>
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-dark mt-4">Realizar copia de seguridad</button>
+</form>
+
+{% endblock %}
