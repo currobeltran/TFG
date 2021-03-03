@@ -24,3 +24,6 @@ def apibuscaBBDD(request):
 
 def copiaSeguridad(request):
     return render(request, 'copiaseguridad.html', {'registrado':True})
+
+def editaUsuario(request):
+    return render(request, 'editausuario.html', {'registrado':True})

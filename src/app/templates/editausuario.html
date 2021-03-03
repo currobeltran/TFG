@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block central %}
+
+<h3 class="mt-4 ms-4">Edita tu información de usuario</h3>
+
+<form class="col-6 mt-3 ms-4">
+    <div class="form-group">
+        <label for="nombreuser">Nombre de usuario</label>
+        <input type="text" class="form-control mt-1" id="nombreuser">
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="contraseña">Nueva contraseña</label>
+        <input type="text" class="form-control mt-1" id="contraseña">
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="contraseña">Nueva contraseña</label>
+        <input type="text" class="form-control mt-1" id="contraseña">
+    </div>
+    
+    <button type="submit" class="btn btn-dark mt-4">Actualizar informacion</button>
+</form>
+
+{% endblock %}
