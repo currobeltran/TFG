@@ -11,18 +11,17 @@
     </head>
 
     <body>
-        <div class="container-fluid">
-            <div class="row mt-4">
-                <h1>Trabajo Fin de Grado</h1>
-            </div>
-    
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-2">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    </button>
-    
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="row mt-4 container-fluid">
+            <h1>Trabajo Fin de Grado</h1>
+        </div>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-2 container-fluid">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="/">Inicio</a>
@@ -42,19 +41,18 @@
                         </li>
                         {% endif %}
                     </ul>
-                    </div>
-                    {% if registrado == False %}
-                    <a class="btn btn-light" href="#" role="button">Inicia sesión</a>
-                    {% endif %}
                 </div>
-            </nav>
-    
-            <main>
-                {% block central %}
-                    <h2 class="text-center mt-5">Bienvenido a la aplicación</h2>
-                {% endblock %}
-            </main>
-        </div>
+                {% if registrado == False %}
+                    <a class="btn btn-light" href="#" role="button">Inicia sesión</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <main class="container-fluid" role="main">
+            {% block central %}
+                <h2 class="text-center mt-5">Bienvenido a la aplicación</h2>
+            {% endblock %}
+        </main>
 
         <footer class="footer">
             <div class="container">

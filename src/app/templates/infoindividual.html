@@ -2,14 +2,10 @@
 
 {% block formulario %}
 
-<form class="col-6">
-    <div class="row">
-        <label for="selecciontipo" class="col">Elige un tipo de dato</label>
-        <label for="seleccionobjeto" class="col">Elige uno de los datos disponibles</label>
-    </div>
-
-    <div class="row">
-        <select class="form-control mt-3 col" id="selecciontipo">
+<div class="col-7">
+    <form action="/formulario" method="GET">
+        <label for="selecciontipo">Elige un tipo de dato</label>
+        <select class="form-control mt-2" id="selecciontipo">
             <option>Asignatura</option>
             <option>Mención</option>
             <option>Título</option>
@@ -18,11 +14,14 @@
             <option>Grupo</option>
         </select>
 
-        <select class="form-control mt-3 ms-3 col" id="seleccionobjeto">
+        <label for="seleccionobjeto" class="mt-2">Elige uno de los datos disponibles</label>
+        <select class="form-control mt-2" id="seleccionobjeto">
+            <option>Crear nuevo elemento</option>
             <!-- Aquí se colocará la lista de objetos de un tipo determinado -->
         </select>
-    </div>
-    
-</form>
+        
+        <input class="btn btn-dark mt-3" type="submit" value="Generar formulario">
+    </form>
+</div>
 
 {% endblock %}
