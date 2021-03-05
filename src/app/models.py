@@ -77,37 +77,64 @@ def ObtenerRegistros(tabla):
     if tabla == "Asignatura":
         x = Asignatura.objects.all()
         for i in x:
-            ret.append(i.Nombre)
+            ret.append({'id':i.PK, 'nombre':i.Nombre})
         return ret
 
     elif tabla == "Área":
         x = Area.objects.all()
         for i in x:
-            ret.append(i.Nombre)
+            ret.append({'id':i.ID, 'nombre':i.Nombre})
         return ret
 
     elif tabla == "Mención":
         x = Mencion.objects.all()
         for i in x:
-            ret.append(i.Nombre)
+            ret.append({'id':i.ID, 'nombre':i.Nombre})
         return ret
 
     elif tabla == "Título":
         x = Titulo.objects.all()
         for i in x:
-            ret.append(i.Nombre)
+            ret.append({'id':i.ID, 'nombre':i.Nombre})
         return ret
 
     elif tabla == "Año Asignatura":
         x = AñoAsignatura.objects.all()
         for i in x:
-            ret.append(i.Año)
+            ret.append({'id':i.ID, 'nombre':i.Año})
         return ret
 
     elif tabla == "Grupo":
         x = Grupo.objects.all()
         for i in x:
-            ret.append(i.Letra)
+            ret.append({'id':i.ID, 'nombre':i.Letra})
         return ret
 
     return ret
+
+def ObtenerElemento(tabla, id):
+    if tabla == "Asignatura":
+        x = Asignatura.objects.get(PK=id)
+        return x
+
+    elif tabla == "Área":
+        x = Area.objects.get(ID=id)
+        return x
+
+    elif tabla == "Mención":
+        x = Mencion.objects.get(ID=id)
+        return x
+
+    elif tabla == "Título":
+        x = Titulo.objects.get(ID=id)
+        return x
+
+    elif tabla == "Año asignatura":
+        x = AñoAsignatura.objects.get(ID=id)
+        return x
+
+    elif tabla == "Grupo":
+        x = Grupo.objects.get(ID=id)
+        return x
+
+    return ''

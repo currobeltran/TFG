@@ -3,20 +3,20 @@
 {% block formulario %}
 
 <div class="col-7">
-    <form action="/formulario" method="GET">
+    <form action="/formularioedicion" method="GET">
         <label for="selecciontipo">Elige un tipo de dato</label>
-        <select class="form-control mt-2" id="selecciontipo">
-            <option>Asignatura</option>
-            <option>Mención</option>
-            <option>Título</option>
-            <option>Área</option>
-            <option>Año asignatura</option>
-            <option>Grupo</option>
+        <select class="form-control mt-2" id="selecciontipo" name="selecciontipo">
+            <option value="Asignatura">Asignatura</option>
+            <option value="Mención">Mención</option>
+            <option value="Título">Título</option>
+            <option value="Área">Área</option>
+            <option value="Año asignatura">Año asignatura</option>
+            <option value="Grupo">Grupo</option>
         </select>
 
         <label for="seleccionobjeto" class="mt-2">Elige uno de los datos disponibles</label>
-        <select class="form-control mt-2" id="seleccionobjeto">
-            <option>Crear nuevo elemento</option>
+        <select class="form-control mt-2" id="seleccionobjeto" name="seleccionobjeto">
+            <option value="nuevo">Crear nuevo elemento</option>
             <!-- Aquí se colocará la lista de objetos de un tipo determinado -->
         </select>
         
