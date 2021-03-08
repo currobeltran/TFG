@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+
+{% load account %}
+{% load crispy_forms_tags %}
+
+{% block central %}
+    <div class="container-fluid mt-4">
+        <h4 class="d-flex justify-content-center">Inicia sesión</h4>
+        <div class="d-flex justify-content-center mt-3">
+            <div class="col text-center">
+                <form method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <input class="btn btn-dark mt-3" type="submit" value="Inicia sesión" />
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

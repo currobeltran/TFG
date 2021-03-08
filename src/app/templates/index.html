@@ -42,8 +42,10 @@
                         {% endif %}
                     </ul>
                 </div>
-                {% if registrado == False %}
-                    <a class="btn btn-light" href="#" role="button">Inicia sesión</a>
+                {% if registrado %}
+                    <a class="btn btn-light" href="/accounts/logout" role="button">Salir de sesión</a>
+                {% else %}
+                    <a class="btn btn-light" href="/accounts/login" role="button">Inicia sesión</a>
                 {% endif %}
             </div>
         </nav>
