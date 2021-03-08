@@ -2,21 +2,27 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import ObtenerRegistros
 from .forms import *
+from .utils import *
 
 def inicio(request):
-    return render(request, 'index.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'index.html', {'registrado':registrado})
 
 def buscadorBBDD(request):
-    return render(request, 'buscador.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'buscador.html', {'registrado':registrado})
 
 def editarBBDD(request):
-    return render(request, 'editor.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'editor.html', {'registrado':registrado})
 
 def infomasivaBBDD(request):
-    return render(request, 'infomasiva.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'infomasiva.html', {'registrado':registrado})
 
 def editaindividual(request):
-    return render(request, 'infoindividual.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'infoindividual.html', {'registrado':registrado})
 
 def apibuscaBBDD(request):
     x = ObtenerRegistros(request.GET.get('tipo'))
@@ -27,12 +33,15 @@ def apibuscaBBDD(request):
     return JsonResponse(data)
 
 def copiaSeguridad(request):
-    return render(request, 'copiaseguridad.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'copiaseguridad.html', {'registrado':registrado})
 
 def editaUsuario(request):
-    return render(request, 'editausuario.html', {'registrado':True})
+    registrado = estaRegistrado(request)
+    return render(request, 'editausuario.html', {'registrado':registrado})
 
 def formularioEdicion(request):
+    registrado = estaRegistrado(request)
     form = ''
 
     if request.GET.get('seleccionobjeto') != "nuevo":
@@ -75,6 +84,6 @@ def formularioEdicion(request):
             form = GrupoForm()
 
     if form == '':
-        return render(request, 'error.html', {'registrado':True})
+        return render(request, 'error.html', {'registrado':registrado})
 
-    return render(request, 'formulariogenerado.html', {'registrado':True,'form':form})
+    return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form})

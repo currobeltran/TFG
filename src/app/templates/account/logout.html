@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block central %}
+    <div class="container-fluid mt-4">
+        <h4 class="d-flex justify-content-center">Cerrar sesión</h4>
+        <p class="d-flex justify-content-center">¿Estás seguro de cerrar la sesión?</p>
+    
+        <form method="POST" action="{% url 'account_logout' %}" class="d-flex justify-content-center">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark">Cerrar sesión</button>
+        </form>
+    </div>
+{% endblock %}
