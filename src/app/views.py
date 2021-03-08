@@ -14,14 +14,26 @@ def buscadorBBDD(request):
 
 def editarBBDD(request):
     registrado = estaRegistrado(request)
+    if not registrado:
+        texto = "No tiene permiso para acceder a esta página"
+        return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
+
     return render(request, 'editor.html', {'registrado':registrado})
 
 def infomasivaBBDD(request):
     registrado = estaRegistrado(request)
+    if not registrado:
+        texto = "No tiene permiso para acceder a esta página"
+        return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
+
     return render(request, 'infomasiva.html', {'registrado':registrado})
 
 def editaindividual(request):
     registrado = estaRegistrado(request)
+    if not registrado:
+        texto = "No tiene permiso para acceder a esta página"
+        return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
+
     return render(request, 'infoindividual.html', {'registrado':registrado})
 
 def apibuscaBBDD(request):
@@ -34,10 +46,18 @@ def apibuscaBBDD(request):
 
 def copiaSeguridad(request):
     registrado = estaRegistrado(request)
+    if not registrado:
+        texto = "No tiene permiso para acceder a esta página"
+        return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
+
     return render(request, 'copiaseguridad.html', {'registrado':registrado})
 
 def editaUsuario(request):
     registrado = estaRegistrado(request)
+    if not registrado:
+        texto = "No tiene permiso para acceder a esta página"
+        return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
+        
     return render(request, 'editausuario.html', {'registrado':registrado})
 
 def formularioEdicion(request):
@@ -84,6 +104,7 @@ def formularioEdicion(request):
             form = GrupoForm()
 
     if form == '':
-        return render(request, 'error.html', {'registrado':registrado})
+        texto = "Lo sentimos, ha ocurrido un error"
+        return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
 
     return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form})
