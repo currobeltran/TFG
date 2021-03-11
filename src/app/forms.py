@@ -1,7 +1,10 @@
 from .models import *
-from django.forms import ModelForm, PasswordInput
+from django.forms import ModelForm, PasswordInput, CharField, Form
+from django.contrib.auth.models import User
 from allauth.account.forms import LoginForm
 from allauth.account.utils import perform_login
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
 class AsignaturaForm(ModelForm):
     class Meta:
@@ -78,3 +81,24 @@ class LoginFormPersonalizado(LoginForm):
         )
         
         return ret
+
+class EditarUsuarioForm(Form):
+    nuevo_nombre_de_usuario = CharField(max_length=100)
+    nueva_contraseña = CharField(
+            validators=[
+                RegexValidator(r'^[0-9a-zA-Z@#$%^&+=/-_*!"·]{12,}$',
+                        message="La contraseña debe tener 12 caracteres, un número y uno de los siguientes caracteres: @#$%^&+=/-_*!\"·"
+                    )
+                ],
+            widget=PasswordInput
+        )
+    confirmar_contraseña = CharField(widget=PasswordInput)
+
+    def clean_confirmar_contraseña(self):
+        nueva_contraseña = self.cleaned_data.get('nueva_contraseña')
+        confirmar_contraseña = self.cleaned_data.get('confirmar_contraseña')
+
+        if nueva_contraseña != confirmar_contraseña and nueva_contraseña:
+            raise ValidationError("Las contraseñas no coinciden")
+
+        return self.cleaned_data

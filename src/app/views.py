@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import ObtenerRegistros
 from .forms import *
@@ -57,8 +57,17 @@ def editaUsuario(request):
     if not registrado:
         texto = "No tiene permiso para acceder a esta página"
         return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
-        
-    return render(request, 'editausuario.html', {'registrado':registrado})
+
+    if request.method == 'GET':
+        form = EditarUsuarioForm()
+        return render(request, 'editausuario.html', {'registrado':registrado, 'usuario':request.user, 'form':form})
+    else:
+        form = EditarUsuarioForm(request.POST)
+        if form.is_valid():
+            EditarUsuario(request.user.username, request.POST['nuevo_nombre_de_usuario'], request.POST['nueva_contraseña'])
+            return redirect('/accounts/login',request)
+        else:
+            return render(request, 'editausuario.html', {'registrado':registrado, 'usuario':request.user, 'form':form})
 
 def formularioEdicion(request):
     registrado = estaRegistrado(request)

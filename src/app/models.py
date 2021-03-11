@@ -1,6 +1,6 @@
 from django.db import models
 from django.http import JsonResponse
-
+from django.contrib.auth.models import User
 
 class Asignatura(models.Model):
     OPCIONES_TIPO_ASIGNATURA = [
@@ -138,3 +138,12 @@ def ObtenerElemento(tabla, id):
         return x
 
     return ''
+
+def EditarUsuario(username, nuevousername, nuevacontraseña):
+    user = User.objects.get(username=username)
+
+    user.username = nuevousername
+    user.set_password(nuevacontraseña)
+    user.save()
+
+    return user
