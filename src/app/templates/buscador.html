@@ -1,7 +1,13 @@
 {% extends 'index.html' %}
 
 {% block central %}
-    <div class="container-fluid mt-5 row">
+
+    <!-- Para añadir: Un elemento que despliegue una descripción de como funciona este menú -->
+    <div class="container-fluid mt-3 row">
+        <button class="btn btn-dark col-2">¿Necesitas ayuda?</button>
+    </div>
+
+    <div class="container-fluid mt-4 row">
         <div class="col">
             <h3 class="text-center h4">Asignaturas</h3>
         </div>
@@ -11,121 +17,53 @@
         </div>
 
         <div class="col">
-            <h3 class="text-center h4">Información a visualizar</h3>
+            <h3 class="text-center h4">Información a visualizar (Grupos)</h3>
         </div>
     </div>
-
-    <!-- El siguiente div que aparece se generará con un for, los elementos presentes son 
-    de prueba para poder ver como se dispondrían en la aplicación -->
+    
     <div class="container-fluid mt-5 row">
         <div class="col">
             <ul class="list-group list-group-flush scroll-list">
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="asignaturas" id="asg1">
-                        <label class="form-check-label" for="asg1">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="asignaturas" id="asg2">
-                        <label class="form-check-label" for="asg2">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="asignaturas" id="asg3">
-                        <label class="form-check-label" for="asg3">
-                            An item
-                        </label>
-                    </div>
-                </li>
+                {% for asignatura in asignaturas %}
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="asignaturas" id="{{ asignatura.id }}">
+                            <label class="form-check-label" for="{{ asignatura.id }}">
+                                {{ asignatura.nombre }}
+                            </label>
+                        </div>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
 
         <div class="col">
             <ul class="list-group list-group-flush scroll-list">
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="anoacademico" id="y1">
-                        <label class="form-check-label" for="y1">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="anoacademico" id="y2">
-                        <label class="form-check-label" for="y2">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="anoacademico" id="y3">
-                        <label class="form-check-label" for="y3">
-                            An item
-                        </label>
-                    </div>
-                </li>
+                {% for año in años %}
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="anoacademico" id="{{ año }}">
+                            <label class="form-check-label" for="{{ año }}">
+                                {{ año }}
+                            </label>
+                        </div>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
 
         <div class="col">
             <ul class="list-group list-group-flush scroll-list">
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="info" id="in1">
-                        <label class="form-check-label" for="in1">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="info" id="in2">
-                        <label class="form-check-label" for="in2">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="info" id="in3">
-                        <label class="form-check-label" for="in3">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="in4">
-                        <label class="form-check-label" for="in4">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="info" id="in5">
-                        <label class="form-check-label" for="in5">
-                            An item
-                        </label>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="info" id="in6">
-                        <label class="form-check-label" for="in6">
-                            An item
-                        </label>
-                    </div>
-                </li>
+                {% for i in info %}
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="info" id="{{ i }}">
+                            <label class="form-check-label" for="{{ i }}">
+                                {{ i }}
+                            </label>
+                        </div>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
     </div>

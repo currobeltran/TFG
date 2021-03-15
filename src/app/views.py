@@ -10,7 +10,11 @@ def inicio(request):
 
 def buscadorBBDD(request):
     registrado = estaRegistrado(request)
-    return render(request, 'buscador.html', {'registrado':registrado})
+    asg = ObtenerRegistros("Asignatura")
+    años = ObtenerAñosUnicos()
+    info = ObtenerAtributosTabla("Grupo")
+
+    return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
 
 def editarBBDD(request):
     registrado = estaRegistrado(request)

@@ -139,6 +139,67 @@ def ObtenerElemento(tabla, id):
 
     return ''
 
+def ObtenerAñosUnicos():
+    ret = []
+    x = AñoAsignatura.objects.all()
+    
+    for i in x:
+        ret.append(i.Año)
+
+    unico = list(dict.fromkeys(ret))
+
+    return unico
+
+def ObtenerAtributosTabla(tabla):
+    ret = []
+
+    if tabla == "Asignatura":
+        x = Asignatura._meta.get_fields()
+        for i in x:
+            nombre = i.name
+            ret.append(nombre)
+        return ret
+
+    elif tabla == "Área":
+        x = Area._meta.get_fields()
+        for i in x:
+            nombre = i.name
+            ret.append(nombre)
+        return ret
+
+    elif tabla == "Mención":
+        x = Mencion._meta.get_fields()
+        for i in x:
+            nombre = i.name
+            ret.append(nombre)
+        return ret
+
+    elif tabla == "Título":
+        x = Titulo._meta.get_fields()
+        for i in x:
+            nombre = i.name
+            ret.append(nombre)
+        return ret
+
+    elif tabla == "Año Asignatura":
+        x = AñoAsignatura._meta.get_fields()
+        for i in x:
+            nombre = i.name
+            ret.append(nombre)
+        return ret
+
+    elif tabla == "Grupo":
+        x = Grupo._meta.get_fields()
+        for i in x:
+            nombre = i.name
+            ret.append(nombre)
+        
+        ret.remove("ID")
+        ret.remove("IDAñoAsignatura")
+        return ret
+
+    return ret
+
 def EditarUsuario(username, nuevousername, nuevacontraseña):
     user = User.objects.get(username=username)
 
