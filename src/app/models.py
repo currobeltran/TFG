@@ -200,6 +200,91 @@ def ObtenerAtributosTabla(tabla):
 
     return ret
 
+def ObtenerAñosAsignatura(pk):
+    ret = AñoAsignatura.objects.filter(PK=pk)
+    listaret = []
+
+    for x in ret:
+        listaret.append(x)
+    
+    return listaret
+
+def AsignaturaTieneAño(asig,año):
+    pk = asig.PK
+    añosasig = AñoAsignatura.objects.get(PK=pk,Año=año)
+
+    if añosasig == '':
+        return False
+    else:
+        return añosasig
+
+def ObtenerGruposAño(idaño):
+    ret = []
+    q = Grupo.objects.filter(IDAñoAsignatura=idaño)
+
+    for x in q:
+        ret.append(x)
+
+    return ret
+
+def ObtenerValorInfo(info,gr):
+    if info == "Nuevos":
+        return gr.Nuevos
+    elif info == "Repetidores":
+        return gr.Repetidores
+    elif info == "Retenidos":
+        return gr.Retenidos
+    elif info == "Plazas":
+        return gr.Plazas
+    elif info == "LibreConfiguracion":
+        return gr.LibreConfiguracion
+    elif info == "OtrosTitulos":
+        return gr.OtrosTitulos
+    elif info == "Asimilado":
+        return gr.Asimilado
+    elif info == "Compartido":
+        return gr.Compartido
+    elif info == "Turno":
+        return gr.Turno
+    elif info == "GruposReducidos":
+        return gr.GruposReducidos
+
+    return False
+
+def ConsultaBusquedaBBDD(asig,años,info):
+    ret = {}
+
+    for x in asig:
+        asgaux = ObtenerElemento("Asignatura",x)
+        añosasig = ObtenerAñosAsignatura(asgaux.PK)
+        grupos = {}
+
+        for a in años:
+            objaño = AsignaturaTieneAño(asgaux,a) 
+            
+            if objaño != False:
+                gr = ObtenerGruposAño(objaño.ID)
+                for x in gr:
+                    key = x.Letra + " " + objaño.Año.__str__()
+                    grupos[key] = {'Letra':x.Letra}
+                    for i in info:
+                        if ObtenerValorInfo(i,x) != False:
+                            grupos[key][i] = ObtenerValorInfo(i,x)
+
+        ret[asgaux.Nombre] = {
+            'Nombre':asgaux.Nombre,
+            'PK':asgaux.PK,
+            'Acronimo':asgaux.Acronimo,
+            'Creditos Grupo Amplio':asgaux.CreditosGA,
+            'Creditos Grupo Reducido':asgaux.CreditosGR,
+            'Curso':asgaux.Curso,
+            'Semestre':asgaux.Semestre,
+            'Tipo de Asignatura':asgaux.TipoAsignatura,
+            'Grupos':grupos,
+        }
+
+    return ret
+
 def EditarUsuario(username, nuevousername, nuevacontraseña):
     user = User.objects.get(username=username)
 

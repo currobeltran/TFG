@@ -10,11 +10,32 @@ def inicio(request):
 
 def buscadorBBDD(request):
     registrado = estaRegistrado(request)
-    asg = ObtenerRegistros("Asignatura")
-    años = ObtenerAñosUnicos()
-    info = ObtenerAtributosTabla("Grupo")
+    if request.method == "GET":
+        asg = ObtenerRegistros("Asignatura")
+        años = ObtenerAñosUnicos()
+        info = ObtenerAtributosTabla("Grupo")
 
-    return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
+        return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
+    else:
+        asg = ObtenerRegistros("Asignatura")
+        años = ObtenerAñosUnicos()
+        info = ObtenerAtributosTabla("Grupo")
+
+        asgbusqueda = request.POST.getlist('asignaturas[]')
+        if not asgbusqueda:
+            asgbusqueda = ObtenerRegistros("Asignatura")
+
+        añosbusqueda = request.POST.getlist('añoacademico[]')
+        if not añosbusqueda:
+            añosbusqueda = ObtenerAñosUnicos()
+        
+        infobusqueda = request.POST.getlist('info[]')
+        if not infobusqueda:
+            infobusqueda = ObtenerAtributosTabla("Grupo")
+        
+        a = ConsultaBusquedaBBDD(asgbusqueda,añosbusqueda,infobusqueda)
+
+        return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
 
 def editarBBDD(request):
     registrado = estaRegistrado(request)

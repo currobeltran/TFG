@@ -21,13 +21,14 @@
         </div>
     </div>
     
-    <div class="container-fluid mt-5 row">
+    <form class="container-fluid mt-5 row" action="/buscadorBBDD" method="POST">
+        {% csrf_token %}
         <div class="col">
             <ul class="list-group list-group-flush scroll-list">
                 {% for asignatura in asignaturas %}
                     <li class="list-group-item">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="asignaturas" id="{{ asignatura.id }}">
+                            <input class="form-check-input" type="checkbox" value="{{ asignatura.id }}" id="{{ asignatura.id }}" name="asignaturas[]">
                             <label class="form-check-label" for="{{ asignatura.id }}">
                                 {{ asignatura.nombre }}
                             </label>
@@ -42,7 +43,7 @@
                 {% for año in años %}
                     <li class="list-group-item">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="anoacademico" id="{{ año }}">
+                            <input class="form-check-input" type="checkbox" name="añoacademico[]" id="{{ año }}" value="{{ año }}">
                             <label class="form-check-label" for="{{ año }}">
                                 {{ año }}
                             </label>
@@ -57,7 +58,7 @@
                 {% for i in info %}
                     <li class="list-group-item">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="info" id="{{ i }}">
+                            <input class="form-check-input" type="checkbox" name="info[]" id="{{ i }}" value="{{ i }}">
                             <label class="form-check-label" for="{{ i }}">
                                 {{ i }}
                             </label>
@@ -66,24 +67,25 @@
                 {% endfor %}
             </ul>
         </div>
-    </div>
 
-    <div class="container-fluid mt-5 row">
-        <div class="col">
-            <div class="custom-control custom-radio">
-                <input type="radio" id="tabla" name="customRadio" class="custom-control-input">
-                <label class="custom-control-label" for="tabla">Modo tabla</label>
-            </div>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="grafica" name="customRadio" class="custom-control-input">
-                <label class="custom-control-label" for="grafica">Modo gráfica</label>
+        <div class="container-fluid mt-5 row">
+            <div class="col">
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="tabla" name="customRadio" class="custom-control-input">
+                    <label class="custom-control-label" for="tabla">Modo tabla</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="grafica" name="customRadio" class="custom-control-input">
+                    <label class="custom-control-label" for="grafica">Modo gráfica</label>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="container-fluid mt-5 row">
-        <div class="col">
-            <button type="submit" class="btn btn-dark">Buscar</button>
+    
+        <div class="container-fluid mt-5 row">
+            <div class="col">
+                <button type="submit" class="btn btn-dark">Buscar</button>
+            </div>
+    
         </div>
-    </div>
+    </form>
 {% endblock %}
