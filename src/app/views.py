@@ -3,6 +3,9 @@ from django.http import JsonResponse
 from .models import ObtenerRegistros
 from .forms import *
 from .utils import *
+import plotly.offline as plotly
+import numpy as np
+import plotly.graph_objs as go
 
 def inicio(request):
     registrado = estaRegistrado(request)
@@ -35,7 +38,29 @@ def buscadorBBDD(request):
         
         a = ConsultaBusquedaBBDD(asgbusqueda,añosbusqueda,infobusqueda)
 
-        return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
+        curso = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(values=[
+                            'Asignatura','Curso', 'AC', 'Cr.GA', 'Cr.GR', 'Cuat', 'Tipo'
+                        ]+[atr for x in a for año in a[x].get('Grupos') for atr in a[x].get('Grupos').get(año)]
+                    ),
+                    cells=dict(values=[
+                            [a[x].get('Nombre') for x in a], 
+                            [a[x].get('Curso') for x in a], 
+                            [a[x].get('Acronimo') for x in a],
+                            [a[x].get('Creditos Grupo Amplio') for x in a],
+                            [a[x].get('Creditos Grupo Reducido') for x in a],
+                            [a[x].get('Semestre') for x in a],
+                            [a[x].get('Tipo de Asignatura') for x in a],
+                        ]+[a[x].get('Grupos').get(año)[atr] for x in a for año in a[x].get('Grupos') for atr in a[x].get('Grupos').get(año)]
+                    )
+                )
+            ]
+        )
+        graph = curso.to_html() 
+
+        return render(request, 'resultadobusqueda.html', {'registrado':registrado,'graph':graph})
 
 def editarBBDD(request):
     registrado = estaRegistrado(request)

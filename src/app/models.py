@@ -266,7 +266,7 @@ def ConsultaBusquedaBBDD(asig,años,info):
                 gr = ObtenerGruposAño(objaño.ID)
                 for x in gr:
                     key = x.Letra + " " + objaño.Año.__str__()
-                    grupos[key] = {'Letra':x.Letra}
+                    grupos[key] = {'Año Academico':objaño.Año.__str__(),'Letra':x.Letra}
                     for i in info:
                         if ObtenerValorInfo(i,x) != False:
                             grupos[key][i] = ObtenerValorInfo(i,x)

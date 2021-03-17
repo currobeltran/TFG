@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
+
+    'plotly',
+    'numpy',
 ]
 
 MIDDLEWARE = [
