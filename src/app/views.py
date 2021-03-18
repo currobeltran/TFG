@@ -143,6 +143,15 @@ def formularioEdicion(request):
             if request.GET.get('tipo') == "Mención":
                 CrearMencion(codigo=request.POST.get('Codigo'),nombre=request.POST.get('Nombre'))
 
+            if request.GET.get('tipo') == "Título":
+                CrearTitulo(
+                    codigo=request.POST.get('Codigo'),
+                    nombre=request.POST.get('Nombre'),
+                    umbralga=request.POST.get('UmbralGA'),
+                    umbralgr=request.POST.get('UmbralGR'),
+                    asignaturatitulo=request.POST.getlist('AsignaturaTitulo')
+                )
+
         return render(request, 'index.html', {'registrado':registrado})
 
     if request.GET.get('seleccionobjeto') != "nuevo":

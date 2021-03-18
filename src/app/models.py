@@ -310,3 +310,10 @@ def CrearAsignatura(nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,c
 def CrearMencion(codigo,nombre):
     n = Mencion(Codigo=codigo,Nombre=nombre)
     n.save()
+
+def CrearTitulo(codigo,nombre,umbralga,umbralgr,asignaturatitulo):
+    n = Titulo(Codigo=codigo,Nombre=nombre,UmbralGA=umbralga,UmbralGR=umbralgr)
+    n.save()
+    
+    n.AsignaturaTitulo.set(asignaturatitulo)
+    n.save()
