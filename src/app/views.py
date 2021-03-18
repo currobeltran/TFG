@@ -159,6 +159,13 @@ def formularioEdicion(request):
                     acronimo=request.POST.get('Acronimo'),
                     asignaturaarea=request.POST.getlist('AsignaturaArea')
                 )
+            
+            if request.GET.get('tipo') == "Año asignatura":
+                CrearAñoAsignatura(
+                    pk=request.POST.get('PK'),
+                    año=request.POST.get('Año'),
+                    matriculados=request.POST.get('Matriculados')
+                )
 
         return render(request, 'index.html', {'registrado':registrado})
 

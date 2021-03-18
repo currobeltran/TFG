@@ -324,3 +324,9 @@ def CrearArea(nombre,departamento,acronimo,asignaturaarea):
 
     n.AsignaturaArea.set(asignaturaarea)
     n.save()
+
+def CrearAñoAsignatura(pk,año,matriculados):
+    asig = ObtenerElemento("Asignatura",pk)
+
+    n = AñoAsignatura(PK=asig,Año=año,Matriculados=matriculados)
+    n.save()
