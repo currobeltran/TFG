@@ -314,6 +314,13 @@ def CrearMencion(codigo,nombre):
 def CrearTitulo(codigo,nombre,umbralga,umbralgr,asignaturatitulo):
     n = Titulo(Codigo=codigo,Nombre=nombre,UmbralGA=umbralga,UmbralGR=umbralgr)
     n.save()
-    
+
     n.AsignaturaTitulo.set(asignaturatitulo)
+    n.save()
+
+def CrearArea(nombre,departamento,acronimo,asignaturaarea):
+    n = Area(Nombre=nombre,Departamento=departamento,Acronimo=acronimo)
+    n.save()
+
+    n.AsignaturaArea.set(asignaturaarea)
     n.save()
