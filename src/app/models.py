@@ -330,3 +330,22 @@ def CrearAñoAsignatura(pk,año,matriculados):
 
     n = AñoAsignatura(PK=asig,Año=año,Matriculados=matriculados)
     n.save()
+
+def CrearGrupo(idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,otrostitulos,turno,gruposred,asimilado=0,compartido=0):
+    añoasig = ObtenerElemento("Año asignatura", idañoasig)
+
+    n = Grupo(
+        IDAñoAsignatura=añoasig,
+        Letra=letra,
+        Nuevos=nuevos,
+        Repetidores=repetidores,
+        Retenidos=retenidos,
+        Plazas=plazas,
+        LibreConfiguracion=libreconf,
+        OtrosTitulos=otrostitulos,
+        Asimilado=asimilado,
+        Compartido=compartido,
+        Turno=turno,
+        GruposReducidos=gruposred
+    )
+    n.save()
