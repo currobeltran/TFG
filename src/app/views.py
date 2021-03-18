@@ -122,9 +122,29 @@ def editaUsuario(request):
 def formularioEdicion(request):
     registrado = estaRegistrado(request)
     form = ''
+    nuevo = True
+
+    if request.method == 'POST':
+        if request.path == "/formularioedicion/nuevo":
+            if request.GET.get('tipo') == "Asignatura":
+                CrearAsignatura(
+                    nombre=request.POST.get('Nombre'),
+                    acronimo=request.POST.get('Acronimo'),
+                    creditosgr=int(request.POST.get('CreditosGR')),
+                    creditosga=int(request.POST.get('CreditosGA')),
+                    idasiganterior=int(request.POST.get('IdAsignaturaAnterior')),
+                    curso=int(request.POST.get('Curso')),
+                    codigo=int(request.POST.get('Codigo')),
+                    semestre=int(request.POST.get('Semestre')),
+                    tipoasig=int(request.POST.get('TipoAsignatura')),
+                    idmencion=int(request.POST.get('IDMencion'))
+                )
+
+        return render(request, 'index.html', {'registrado':registrado})
 
     if request.GET.get('seleccionobjeto') != "nuevo":
         obj = ObtenerElemento(request.GET.get('selecciontipo'), request.GET.get('seleccionobjeto'))
+        nuevo = False
 
     if request.GET.get('selecciontipo') == "Asignatura":
         if request.GET.get('seleccionobjeto') != "nuevo":
@@ -166,4 +186,4 @@ def formularioEdicion(request):
         texto = "Lo sentimos, ha ocurrido un error"
         return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
 
-    return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form})
+    return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form,'nuevo':nuevo,'tipo':request.GET.get('selecciontipo')})

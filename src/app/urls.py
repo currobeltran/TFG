@@ -10,5 +10,6 @@ urlpatterns = [
     path('api/buscarBBDD', views.apibuscaBBDD, name='buscaBBDD'),
     path('copiaseguridad',views.copiaSeguridad, name='copiaseguridad'),
     path('editausuario', views.editaUsuario, name='editaUsuario'),
-    path('formularioedicion', views.formularioEdicion, name='formularioedicion')
+    path('formularioedicion', views.formularioEdicion, name='formularioedicion'),
+    path('formularioedicion/nuevo',views.formularioEdicion, name='formularioedicionnuevo'),
 ]

@@ -1,6 +1,7 @@
 from django.db import models
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+import math
 
 class Asignatura(models.Model):
     OPCIONES_TIPO_ASIGNATURA = [
@@ -293,3 +294,15 @@ def EditarUsuario(username, nuevousername, nuevacontraseña):
     user.save()
 
     return user
+
+def CrearAsignatura(nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
+    mencion = ObtenerElemento("Mención", idmencion)
+    titulo = math.floor(codigo/10000)
+    plan = math.floor((codigo-titulo*10000)/100)
+    idcodigo = (codigo - titulo*10000 - plan*100)
+
+    pk = idcodigo*10 + tipoasig*1000 + semestre*10000 + curso*100000 + mencion.Codigo*1000000 + plan*100000000 + titulo*10000000000
+    n = Asignatura(PK=pk,PKDif=0,Nombre=nombre,Acronimo=acronimo,CreditosGR=creditosgr,CreditosGA=creditosga,IdAsignaturaAnterior=idasiganterior,
+    Curso=curso,Codigo=codigo,Semestre=semestre,TipoAsignatura=tipoasig,IDMencion=mencion)
+
+    n.save()

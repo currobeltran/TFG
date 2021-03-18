@@ -4,11 +4,18 @@
 
 {% load crispy_forms_tags %}
 
-<form method="POST">
+{% if nuevo == True %}
+<form method="POST" action="/formularioedicion/nuevo?tipo={{ tipo }}">
     {% csrf_token %}
     {{ form | crispy }}
     <input type="submit" class="btn btn-dark mt-3" value="Confirmar">
 </form>
-
+{% else %}
+<form method="POST" action="/formularioedicion/{{ id }}">
+    {% csrf_token %}
+    {{ form | crispy }}
+    <input type="submit" class="btn btn-dark mt-3" value="Confirmar">
+</form>
+{% endif %}
 
 {% endblock %}
