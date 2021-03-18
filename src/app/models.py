@@ -306,3 +306,7 @@ def CrearAsignatura(nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,c
     Curso=curso,Codigo=codigo,Semestre=semestre,TipoAsignatura=tipoasig,IDMencion=mencion)
 
     n.save()
+
+def CrearMencion(codigo,nombre):
+    n = Mencion(Codigo=codigo,Nombre=nombre)
+    n.save()
