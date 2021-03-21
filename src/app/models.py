@@ -400,3 +400,32 @@ def ModificaArea(id,nombre,departamento,acronimo,asignaturaarea):
     area.AsignaturaArea.set(asignaturaarea)
 
     area.save()
+
+def ModificaAñoAsignatura(id,pk,año,matriculados):
+    añoasig = AñoAsignatura.objects.get(ID=id)
+    asig = ObtenerElemento("Asignatura",pk)
+
+    añoasig.PK = asig
+    añoasig.Año = año
+    añoasig.Matriculados = matriculados
+
+    añoasig.save()
+
+def ModificaGrupo(id,idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,otrostitulos,turno,gruposred,asimilado=0,compartido=0):
+    grupo = Grupo.objects.get(ID=id)
+    añoasig = ObtenerElemento("Año asignatura",idañoasig)
+
+    grupo.IDAñoAsignatura = añoasig
+    grupo.Letra = letra
+    grupo.Nuevos = nuevos
+    grupo.Repetidores = repetidores
+    grupo.Retenidos = retenidos
+    grupo.Plazas = plazas
+    grupo.LibreConfiguracion = libreconf
+    grupo.OtrosTitulos = otrostitulos
+    grupo.Turno = turno
+    grupo.GruposReducidos = gruposred
+    grupo.Asimilado = asimilado
+    grupo.Compartido = compartido
+
+    grupo.save()

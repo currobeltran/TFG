@@ -221,6 +221,31 @@ def formularioEdicion(request):
                     acronimo=request.POST.get('Acronimo'),
                     asignaturaarea=request.POST.getlist('AsignaturaArea')
                 )
+            
+            if request.GET.get('tipo') == "Año asignatura":
+                idañoasig = request.GET.get('id')
+                ModificaAñoAsignatura(
+                    id = idañoasig,
+                    pk=request.POST.get('PK'),
+                    año=request.POST.get('Año'),
+                    matriculados=request.POST.get('Matriculados')
+                )
+
+            if request.GET.get('tipo') == "Grupo":
+                idgrupo = request.GET.get('id')
+                ModificaGrupo(
+                    id = idgrupo,
+                    idañoasig=request.POST.get('IDAñoAsignatura'),
+                    letra=request.POST.get('Letra'),
+                    nuevos=request.POST.get('Nuevos'),
+                    repetidores=request.POST.get('Repetidores'),
+                    retenidos=request.POST.get('Retenidos'),
+                    plazas=request.POST.get('Plazas'),
+                    libreconf=request.POST.get('LibreConfiguracion'),
+                    otrostitulos=request.POST.get('OtrosTitulos'),
+                    turno=request.POST.get('Turno'),
+                    gruposred=request.POST.get('GruposReducidos')
+                )
 
         return render(request, 'index.html', {'registrado':registrado})
 
