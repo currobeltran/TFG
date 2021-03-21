@@ -379,3 +379,14 @@ def ModificaMencion(id,codigo,nombre):
     mencion.Nombre = nombre
 
     mencion.save()
+
+def ModificaTitulo(id,codigo,nombre,umbralga,umbralgr,asignaturatitulo):
+    titulo = Titulo.objects.get(ID=id)
+
+    titulo.Codigo = codigo
+    titulo.Nombre = nombre
+    titulo.UmbralGA = umbralga
+    titulo.UmbralGR = umbralgr
+    titulo.AsignaturaTitulo.set(asignaturatitulo)
+
+    titulo.save()

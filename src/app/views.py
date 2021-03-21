@@ -196,10 +196,21 @@ def formularioEdicion(request):
                     tipoasig=int(request.POST.get('TipoAsignatura')),
                     idmencion=int(request.POST.get('IDMencion'))
                 )
-                
+
             if request.GET.get('tipo') == "Mención":
                 idmencion = request.GET.get('id')
                 ModificaMencion(id=idmencion,codigo=request.POST.get('Codigo'),nombre=request.POST.get('Nombre'))
+
+            if request.GET.get('tipo') == "Título":
+                idtitulo = request.GET.get('id')
+                ModificaTitulo(
+                    id=idtitulo,
+                    codigo=request.POST.get('Codigo'),
+                    nombre=request.POST.get('Nombre'),
+                    umbralga=request.POST.get('UmbralGA'),
+                    umbralgr=request.POST.get('UmbralGR'),
+                    asignaturatitulo=request.POST.getlist('AsignaturaTitulo')    
+                )
 
         return render(request, 'index.html', {'registrado':registrado})
 
