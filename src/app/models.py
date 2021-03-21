@@ -372,3 +372,10 @@ def ModificaAsignatura(id,nombre,acronimo,creditosgr,creditosga,idasiganterior,c
     asig.PK = pk
 
     asig.save()
+
+def ModificaMencion(id,codigo,nombre):
+    mencion = Mencion.objects.get(ID=id)
+    mencion.Codigo = codigo
+    mencion.Nombre = nombre
+
+    mencion.save()
