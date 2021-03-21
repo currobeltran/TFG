@@ -211,6 +211,16 @@ def formularioEdicion(request):
                     umbralgr=request.POST.get('UmbralGR'),
                     asignaturatitulo=request.POST.getlist('AsignaturaTitulo')    
                 )
+            
+            if request.GET.get('tipo') == "Área":
+                idarea = request.GET.get('id')
+                ModificaArea(
+                    id = idarea,
+                    nombre=request.POST.get('Nombre'),
+                    departamento=request.POST.get('Departamento'),
+                    acronimo=request.POST.get('Acronimo'),
+                    asignaturaarea=request.POST.getlist('AsignaturaArea')
+                )
 
         return render(request, 'index.html', {'registrado':registrado})
 

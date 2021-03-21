@@ -390,3 +390,13 @@ def ModificaTitulo(id,codigo,nombre,umbralga,umbralgr,asignaturatitulo):
     titulo.AsignaturaTitulo.set(asignaturatitulo)
 
     titulo.save()
+
+def ModificaArea(id,nombre,departamento,acronimo,asignaturaarea):
+    area = Area.objects.get(ID=id)
+
+    area.Nombre = nombre
+    area.Departamento = departamento
+    area.Acronimo = acronimo
+    area.AsignaturaArea.set(asignaturaarea)
+
+    area.save()
