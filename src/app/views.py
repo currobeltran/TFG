@@ -180,6 +180,22 @@ def formularioEdicion(request):
                     turno=request.POST.get('Turno'),
                     gruposred=request.POST.get('GruposReducidos')
                 )
+        else:
+            if request.GET.get('tipo') == "Asignatura":
+                idasig = request.GET.get('id')
+                ModificaAsignatura(
+                    id=idasig,
+                    nombre=request.POST.get('Nombre'),
+                    acronimo=request.POST.get('Acronimo'),
+                    creditosgr=int(request.POST.get('CreditosGR')),
+                    creditosga=int(request.POST.get('CreditosGA')),
+                    idasiganterior=int(request.POST.get('IdAsignaturaAnterior')),
+                    curso=int(request.POST.get('Curso')),
+                    codigo=int(request.POST.get('Codigo')),
+                    semestre=int(request.POST.get('Semestre')),
+                    tipoasig=int(request.POST.get('TipoAsignatura')),
+                    idmencion=int(request.POST.get('IDMencion'))
+                )
 
         return render(request, 'index.html', {'registrado':registrado})
 
@@ -227,4 +243,5 @@ def formularioEdicion(request):
         texto = "Lo sentimos, ha ocurrido un error"
         return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
 
-    return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form,'nuevo':nuevo,'tipo':request.GET.get('selecciontipo')})
+    return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form,'nuevo':nuevo,'tipo':request.GET.get('selecciontipo'),
+    'objeto':request.GET.get('seleccionobjeto')})

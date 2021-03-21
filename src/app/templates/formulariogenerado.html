@@ -11,7 +11,7 @@
     <input type="submit" class="btn btn-dark mt-3" value="Confirmar">
 </form>
 {% else %}
-<form method="POST" action="/formularioedicion/{{ id }}">
+<form method="POST" action="/formularioedicion?id={{ objeto }}&tipo={{ tipo }}">
     {% csrf_token %}
     {{ form | crispy }}
     <input type="submit" class="btn btn-dark mt-3" value="Confirmar">

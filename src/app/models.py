@@ -349,3 +349,26 @@ def CrearGrupo(idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,ot
         GruposReducidos=gruposred
     )
     n.save()
+
+def ModificaAsignatura(id,nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
+    mencion = ObtenerElemento("Mención", idmencion)
+    titulo = math.floor(codigo/10000)
+    plan = math.floor((codigo-titulo*10000)/100)
+    idcodigo = (codigo - titulo*10000 - plan*100)
+
+    pk = idcodigo*10 + tipoasig*1000 + semestre*10000 + curso*100000 + mencion.Codigo*1000000 + plan*100000000 + titulo*10000000000
+
+    asig = Asignatura.objects.get(pk=id)
+    asig.Nombre = nombre
+    asig.Acronimo = acronimo
+    asig.CreditosGR = creditosgr
+    asig.CreditosGA = creditosga
+    asig.IdAsignaturaAnterior = idasiganterior
+    asig.Curso = curso
+    asig.Codigo = codigo
+    asig.Semestre = semestre
+    asig.TipoAsignatura = tipoasig
+    asig.IDMencion = mencion
+    asig.PK = pk
+
+    asig.save()
