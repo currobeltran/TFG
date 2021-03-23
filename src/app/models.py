@@ -99,7 +99,7 @@ def ObtenerRegistros(tabla):
             ret.append({'id':i.ID, 'nombre':i.Nombre})
         return ret
 
-    elif tabla == "Año Asignatura":
+    elif tabla == "Año asignatura":
         x = AñoAsignatura.objects.all()
         for i in x:
             ret.append({'id':i.ID, 'nombre':i.Año})
