@@ -12,4 +12,5 @@ urlpatterns = [
     path('editausuario', views.editaUsuario, name='editaUsuario'),
     path('formularioedicion', views.formularioEdicion, name='formularioedicion'),
     path('formularioedicion/nuevo',views.formularioEdicion, name='formularioedicionnuevo'),
+    path('eliminaregistro',views.eliminaRegistro,name='eliminaregistro'),
 ]

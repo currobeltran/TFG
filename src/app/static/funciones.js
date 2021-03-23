@@ -16,6 +16,18 @@ $(document).ready(function(){
                 $('#seleccionobjeto').html(lista)
             }
         })
+        
+        document.getElementById('eliminar').style.display = 'none';
     })
 
+    $('#seleccionobjeto').change(function(){
+        let value = $(this).val()
+
+        if(value != "nuevo"){
+            document.getElementById('eliminar').style.display = 'block';
+        }
+        else{
+            document.getElementById('eliminar').style.display = 'none';
+        }
+    })
 })

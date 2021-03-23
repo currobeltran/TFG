@@ -256,36 +256,102 @@ def formularioEdicion(request):
     if request.GET.get('selecciontipo') == "Asignatura":
         if request.GET.get('seleccionobjeto') != "nuevo":
             form = AsignaturaForm(instance=obj)
+            if 'elimina' in request.GET:
+                return render(
+                    request, 
+                    'eliminaregistro.html', 
+                    {
+                        'registrado':registrado, 
+                        'form':form, 
+                        'id':request.GET.get('seleccionobjeto'),
+                        'tipo':request.GET.get('selecciontipo')
+                    }
+                )
         else:
             form = AsignaturaForm()
 
     elif request.GET.get('selecciontipo') == "Área":
         if request.GET.get('seleccionobjeto') != "nuevo":
             form = AreaForm(instance=obj)
+            if 'elimina' in request.GET:
+                return render(
+                    request, 
+                    'eliminaregistro.html', 
+                    {
+                        'registrado':registrado, 
+                        'form':form, 
+                        'id':request.GET.get('seleccionobjeto'),
+                        'tipo':request.GET.get('selecciontipo')
+                    }
+                )
         else:
             form = AreaForm()
 
     elif request.GET.get('selecciontipo') == "Mención":
         if request.GET.get('seleccionobjeto') != "nuevo":
             form = MencionForm(instance=obj)
+            if 'elimina' in request.GET:
+                return render(
+                    request, 
+                    'eliminaregistro.html', 
+                    {
+                        'registrado':registrado, 
+                        'form':form, 
+                        'id':request.GET.get('seleccionobjeto'),
+                        'tipo':request.GET.get('selecciontipo')
+                    }
+                )
         else:
             form = MencionForm()
 
     elif request.GET.get('selecciontipo') == "Título":
         if request.GET.get('seleccionobjeto') != "nuevo":
             form = TituloForm(instance=obj)
+            if 'elimina' in request.GET:
+                return render(
+                    request, 
+                    'eliminaregistro.html', 
+                    {
+                        'registrado':registrado, 
+                        'form':form, 
+                        'id':request.GET.get('seleccionobjeto'),
+                        'tipo':request.GET.get('selecciontipo')
+                    }
+                )
         else:
             form = TituloForm()
 
     elif request.GET.get('selecciontipo') == "Año asignatura":
         if request.GET.get('seleccionobjeto') != "nuevo":
             form = AñoAsignaturaForm(instance=obj)
+            if 'elimina' in request.GET:
+                return render(
+                    request, 
+                    'eliminaregistro.html', 
+                    {
+                        'registrado':registrado, 
+                        'form':form, 
+                        'id':request.GET.get('seleccionobjeto'),
+                        'tipo':request.GET.get('selecciontipo')
+                    }
+                )
         else:
             form = AñoAsignaturaForm()
 
     elif request.GET.get('selecciontipo') == "Grupo":
         if request.GET.get('seleccionobjeto') != "nuevo":
             form = GrupoForm(instance=obj)
+            if 'elimina' in request.GET:
+                return render(
+                    request, 
+                    'eliminaregistro.html', 
+                    {
+                        'registrado':registrado, 
+                        'form':form, 
+                        'id':request.GET.get('seleccionobjeto'),
+                        'tipo':request.GET.get('selecciontipo')
+                    }
+                )
         else:
             form = GrupoForm()
 
@@ -295,3 +361,10 @@ def formularioEdicion(request):
 
     return render(request, 'formulariogenerado.html', {'registrado':registrado,'form':form,'nuevo':nuevo,'tipo':request.GET.get('selecciontipo'),
     'objeto':request.GET.get('seleccionobjeto')})
+
+def eliminaRegistro(request):
+    registrado = estaRegistrado(request)
+    # Obtener elemento a eliminar a traves de id (desde url) y mandar peticion de eliminado a BBDD
+    EliminaObjeto(request.GET.get('id'),request.GET.get('tipo'))
+
+    return render(request, 'index.html', {'registrado':registrado})

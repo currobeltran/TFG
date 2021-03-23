@@ -429,3 +429,7 @@ def ModificaGrupo(id,idañoasig,letra,nuevos,repetidores,retenidos,plazas,librec
     grupo.Compartido = compartido
 
     grupo.save()
+
+def EliminaObjeto(id,tabla):
+    elemento = ObtenerElemento(tabla,id)
+    elemento.delete()

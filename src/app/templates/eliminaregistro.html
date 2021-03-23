@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block central %}
+    <div class="container-fluid row mt-3">
+        <h3>¿Está seguro de que desea eliminar el siguiente elemento?</h3>
+
+        <form action="/eliminaregistro?id={{ id }}&tipo={{ tipo }}" method="POST" class="mt-2">
+            {% csrf_token %}
+            <fieldset disabled="disabled">
+                {{ form | crispy }}
+            </fieldset>
+            <input class="btn btn-dark mt-3" type="submit" value="Eliminar" name="edita">
+        </form>
+    </div>
+{% endblock %}
