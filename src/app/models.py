@@ -212,8 +212,13 @@ def ObtenerAñosAsignatura(pk):
 
 def AsignaturaTieneAño(asig,año):
     pk = asig.PK
-    añosasig = AñoAsignatura.objects.get(PK=pk,Año=año)
+    añosasig = ''
 
+    try:
+        añosasig = AñoAsignatura.objects.get(PK=pk,Año=año)
+    except:
+        print("Consulta inexistente")
+        
     if añosasig == '':
         return False
     else:
@@ -258,19 +263,31 @@ def ConsultaBusquedaBBDD(asig,años,info):
     for x in asig:
         asgaux = ObtenerElemento("Asignatura",x)
         añosasig = ObtenerAñosAsignatura(asgaux.PK)
-        grupos = {}
+        infoaño = {}
 
         for a in años:
             objaño = AsignaturaTieneAño(asgaux,a) 
             
             if objaño != False:
                 gr = ObtenerGruposAño(objaño.ID)
+                infoaño['NumeroGA'] = len(gr)
+                
+                numeroGR = 0
                 for x in gr:
-                    key = x.Letra + " " + objaño.Año.__str__()
-                    grupos[key] = {'Año Academico':objaño.Año.__str__(),'Letra':x.Letra}
-                    for i in info:
-                        if ObtenerValorInfo(i,x) != False:
-                            grupos[key][i] = ObtenerValorInfo(i,x)
+                    numeroGR += gr['GruposReducidos']
+                infoaño['NumeroGR'] = numeroGR
+                infoaño['NumeroMatriculados'] = objaño.Matriculados
+                
+                if(infoaño['NumeroGA'] != 0):
+                    infoaño['RatioGA'] = objaño.Matriculados/infoaño['NumeroGA']
+                else:
+                    infoaño['RatioGA'] = 0
+                
+                if(infoaño['NumeroGR'] != 0):
+                    infoaño['RatioGR'] = objaño.Matriculados/infoaño['NumeroGR']
+                else:
+                    infoaño['RatioGR'] = 0
+
 
         ret[asgaux.Nombre] = {
             'Nombre':asgaux.Nombre,
@@ -281,7 +298,7 @@ def ConsultaBusquedaBBDD(asig,años,info):
             'Curso':asgaux.Curso,
             'Semestre':asgaux.Semestre,
             'Tipo de Asignatura':asgaux.TipoAsignatura,
-            'Grupos':grupos,
+            'InfoAño':infoaño,
         }
 
     return ret

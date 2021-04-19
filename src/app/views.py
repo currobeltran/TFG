@@ -46,7 +46,8 @@ def buscadorBBDD(request):
 
         asgbusqueda = request.POST.getlist('asignaturas[]')
         if not asgbusqueda:
-            asgbusqueda = ObtenerRegistros("Asignatura")
+            registros = ObtenerRegistros("Asignatura")
+            
 
         añosbusqueda = request.POST.getlist('añoacademico[]')
         if not añosbusqueda:
@@ -63,8 +64,7 @@ def buscadorBBDD(request):
                 go.Table(
                     header=dict(values=[
                             'Asignatura','Curso', 'AC', 'Cr.GA', 'Cr.GR', 'Cuat', 'Tipo'
-                        ]+[atr for x in a for año in a[x].get('Grupos') for atr in a[x].get('Grupos').get(año)]
-                    ),
+                    ]),
                     cells=dict(values=[
                             [a[x].get('Nombre') for x in a], 
                             [a[x].get('Curso') for x in a], 
@@ -72,15 +72,34 @@ def buscadorBBDD(request):
                             [a[x].get('Creditos Grupo Amplio') for x in a],
                             [a[x].get('Creditos Grupo Reducido') for x in a],
                             [a[x].get('Semestre') for x in a],
-                            [a[x].get('Tipo de Asignatura') for x in a],
-                        ]+[a[x].get('Grupos').get(año)[atr] for x in a for año in a[x].get('Grupos') for atr in a[x].get('Grupos').get(año)]
-                    )
+                            [a[x].get('Tipo de Asignatura') for x in a]
+                    ])
                 )
             ]
         )
         graph = curso.to_html() 
 
-        return render(request, 'resultadobusqueda.html', {'registrado':registrado,'graph':graph})
+        alumnos = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(values=[
+                        'Curso', 'AL', 'GA', 'GR', 'Rat T', 'Rat P'
+                    ]),
+                    cells=dict(values=[
+                        [añosbusqueda[x] for x in range(0, len(añosbusqueda))],
+                        [a[x].get('InfoAño').get('NumeroMatriculados') for x in a],
+                        [a[x].get('InfoAño').get('NumeroGA') for x in a],
+                        [a[x].get('InfoAño').get('NumeroGR') for x in a],
+                        [a[x].get('InfoAño').get('RatioGA') for x in a],
+                        [a[x].get('InfoAño').get('RatioGR') for x in a],
+                    ])
+                )
+            ]
+        )
+
+        graph2 = alumnos.to_html()
+
+        return render(request, 'resultadobusqueda.html', {'registrado':registrado,'graph':graph,'graphi':graph2})
 
 # EditarBBDD: Vista inicial de la función de edición.
 # 
