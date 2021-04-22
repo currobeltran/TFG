@@ -1,5 +1,5 @@
 from .models import *
-from django.forms import ModelForm, PasswordInput, CharField, Form
+from django.forms import ModelForm, PasswordInput, CharField, Form, FileField, ChoiceField, IntegerField, ModelChoiceField, FloatField
 from django.contrib.auth.models import User
 from allauth.account.forms import LoginForm
 from allauth.account.utils import perform_login
@@ -11,6 +11,7 @@ class AsignaturaForm(ModelForm):
         model = Asignatura
         fields = [
             'Nombre',
+            'PKDif',
             'Acronimo',
             'CreditosGR',
             'CreditosGA',
@@ -21,6 +22,12 @@ class AsignaturaForm(ModelForm):
             'TipoAsignatura',
             'IDMencion',
         ]
+
+    CreditosGR = FloatField(label="Créditos grupo reducido")
+    CreditosGA = FloatField(label="Créditos grupo amplio")
+    Codigo = CharField(max_length=7,min_length=7)
+    # No se que se muestre el nombre de la opción en vez de su ID
+    IDMencion = ModelChoiceField(queryset=Mencion.objects, label="Mención")
 
 class AreaForm(ModelForm):
     class Meta:
@@ -102,3 +109,11 @@ class EditarUsuarioForm(Form):
             raise ValidationError("Las contraseñas no coinciden")
 
         return self.cleaned_data
+
+class SubirArchivoDatos(Form):
+    archivo = FileField(label="Suba aquí su archivo de datos")
+    opcion = ChoiceField(choices=(
+                            (1,"Añadir asignaturas"),
+                            (2,"Añadir áreas"),
+                            (3,"Añadir años académicos de asignaturas")
+                        ), label="Elija una opción")

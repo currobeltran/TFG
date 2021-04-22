@@ -8,6 +8,8 @@ from .utils import *
 import plotly.offline as plotly
 import numpy as np
 import plotly.graph_objs as go
+import csv
+from io import StringIO
 
 # Inicio: Vista inicial de la aplicación
 # TODO: Añadir un parámetro al renderizado de index.html para que se pueda
@@ -125,8 +127,46 @@ def infomasivaBBDD(request):
     if not registrado:
         texto = "No tiene permiso para acceder a esta página"
         return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
+    
+    if request.method == "GET":
+        form = SubirArchivoDatos()
+    else:
+        form = SubirArchivoDatos(request.POST,request.FILES)
+        if form.is_valid():
+            content = StringIO(request.FILES['archivo'].read().decode('utf-8'))
+            data = csv.DictReader(content)
+            for row in data:
+                if request.POST['opcion']=="1":
+                    if row['IdAsignaturaAnterior'] == "":
+                        idanterior=0
+                    else:
+                        idanterior=int(row['IdAsignaturaAnterior'])
 
-    return render(request, 'infomasiva.html', {'registrado':registrado})
+                    if row['PKDif'] == "":
+                        pkdif=0
+                    else:
+                        pkdif=row['PKDif']
+
+                    CrearAsignaturaDesdeCSV(
+                        row['Nombre'],
+                        pkdif,
+                        row['Acronimo'],
+                        float(row['CreditosGR']),
+                        float(row['CreditosGA']),
+                        idanterior,
+                        int(row['Curso']),
+                        row['Codigo'],
+                        int(row['Semestre']),
+                        int(row['TipoAsignatura']),
+                        int(row['IDMencion'])
+                    )
+                elif request.POST['opcion']=="2":
+                    print(row)
+                elif request.POST['opcion']=="3":
+                    print(row)
+                # Procesar información y crear objetos
+
+    return render(request, 'infomasiva.html', {'registrado':registrado,'form':form})
 
 # Editaindividual: Vista para la edición de información individual.
 # 
@@ -220,14 +260,25 @@ def formularioEdicion(request):
     if request.method == 'POST':
         if request.path == "/formularioedicion/nuevo":
             if request.GET.get('tipo') == "Asignatura":
+                if request.POST.get('PKDif') == "":
+                    pkdif = 0
+                else:
+                    pkdif = request.POST.get('PKDif')
+
+                if request.POST.get('IdAsignaturaAnterior') == "":
+                    idanterior = 0
+                else:
+                    idanterior = request.POST.get('IdAsignaturaAnterior')
+
                 CrearAsignatura(
                     nombre=request.POST.get('Nombre'),
+                    pkdif=pkdif,
                     acronimo=request.POST.get('Acronimo'),
-                    creditosgr=int(request.POST.get('CreditosGR')),
-                    creditosga=int(request.POST.get('CreditosGA')),
-                    idasiganterior=int(request.POST.get('IdAsignaturaAnterior')),
+                    creditosgr=float(request.POST.get('CreditosGR')),
+                    creditosga=float(request.POST.get('CreditosGA')),
+                    idasiganterior=idanterior,
                     curso=int(request.POST.get('Curso')),
-                    codigo=int(request.POST.get('Codigo')),
+                    codigo=request.POST.get('Codigo'),
                     semestre=int(request.POST.get('Semestre')),
                     tipoasig=int(request.POST.get('TipoAsignatura')),
                     idmencion=int(request.POST.get('IDMencion'))
@@ -279,12 +330,13 @@ def formularioEdicion(request):
                 ModificaAsignatura(
                     id=idasig,
                     nombre=request.POST.get('Nombre'),
+                    pkdif=request.POST.get('PKDif'),
                     acronimo=request.POST.get('Acronimo'),
-                    creditosgr=int(request.POST.get('CreditosGR')),
-                    creditosga=int(request.POST.get('CreditosGA')),
+                    creditosgr=float(request.POST.get('CreditosGR')),
+                    creditosga=float(request.POST.get('CreditosGA')),
                     idasiganterior=int(request.POST.get('IdAsignaturaAnterior')),
                     curso=int(request.POST.get('Curso')),
-                    codigo=int(request.POST.get('Codigo')),
+                    codigo=request.POST.get('Codigo'),
                     semestre=int(request.POST.get('Semestre')),
                     tipoasig=int(request.POST.get('TipoAsignatura')),
                     idmencion=int(request.POST.get('IDMencion'))

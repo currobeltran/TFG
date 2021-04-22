@@ -13,15 +13,15 @@ class Asignatura(models.Model):
         (6, 'Prácticas de Empresa'),
     ]
     
-    PK = models.IntegerField(primary_key=True)
+    PK = models.CharField(primary_key=True, max_length=13)
     PKDif = models.IntegerField(blank=True)
     Nombre = models.CharField(max_length=100)
     Acronimo = models.CharField(max_length=3, blank=True)
-    CreditosGR = models.IntegerField()
-    CreditosGA = models.IntegerField()
+    CreditosGR = models.FloatField()
+    CreditosGA = models.FloatField()
     IdAsignaturaAnterior = models.IntegerField(blank=True)
     Curso = models.IntegerField()
-    Codigo = models.IntegerField()
+    Codigo = models.CharField(max_length=7)
     Semestre = models.IntegerField()
     TipoAsignatura = models.IntegerField(choices=OPCIONES_TIPO_ASIGNATURA)
     IDMencion = models.ForeignKey('Mencion', on_delete=models.CASCADE)
@@ -35,7 +35,7 @@ class Area(models.Model):
 
 class Mencion(models.Model):
     ID = models.AutoField(primary_key=True)
-    Codigo = models.IntegerField()
+    Codigo = models.CharField(max_length=2)
     Nombre = models.CharField(max_length=100)
 
 class Titulo(models.Model):
@@ -312,14 +312,16 @@ def EditarUsuario(username, nuevousername, nuevacontraseña):
 
     return user
 
-def CrearAsignatura(nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
+def CrearAsignatura(nombre,pkdif,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
     mencion = ObtenerElemento("Mención", idmencion)
-    titulo = math.floor(codigo/10000)
-    plan = math.floor((codigo-titulo*10000)/100)
-    idcodigo = (codigo - titulo*10000 - plan*100)
+    
+    titulo = codigo[0]+codigo[1]+codigo[2]
+    plan = codigo[3]+codigo[4]
+    idcodigo = codigo[5]+codigo[6]
 
-    pk = idcodigo*10 + tipoasig*1000 + semestre*10000 + curso*100000 + mencion.Codigo*1000000 + plan*100000000 + titulo*10000000000
-    n = Asignatura(PK=pk,PKDif=0,Nombre=nombre,Acronimo=acronimo,CreditosGR=creditosgr,CreditosGA=creditosga,IdAsignaturaAnterior=idasiganterior,
+    pk = titulo + plan + mencion.Codigo + str(curso) + str(semestre) + str(tipoasig) + idcodigo + str(pkdif)
+
+    n = Asignatura(PK=pk,PKDif=pkdif,Nombre=nombre,Acronimo=acronimo,CreditosGR=creditosgr,CreditosGA=creditosga,IdAsignaturaAnterior=idasiganterior,
     Curso=curso,Codigo=codigo,Semestre=semestre,TipoAsignatura=tipoasig,IDMencion=mencion)
 
     n.save()
@@ -367,13 +369,14 @@ def CrearGrupo(idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,ot
     )
     n.save()
 
-def ModificaAsignatura(id,nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
+def ModificaAsignatura(id,pkdif,nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
     mencion = ObtenerElemento("Mención", idmencion)
-    titulo = math.floor(codigo/10000)
-    plan = math.floor((codigo-titulo*10000)/100)
-    idcodigo = (codigo - titulo*10000 - plan*100)
+    
+    titulo = codigo[0]+codigo[1]+codigo[2]
+    plan = codigo[3]+codigo[4]
+    idcodigo = codigo[5]+codigo[6]
 
-    pk = idcodigo*10 + tipoasig*1000 + semestre*10000 + curso*100000 + mencion.Codigo*1000000 + plan*100000000 + titulo*10000000000
+    pk = titulo + plan + mencion.Codigo + str(curso) + str(semestre) + str(tipoasig) + idcodigo + str(pkdif)
 
     asig = Asignatura.objects.get(pk=id)
     asig.Nombre = nombre
@@ -450,3 +453,18 @@ def ModificaGrupo(id,idañoasig,letra,nuevos,repetidores,retenidos,plazas,librec
 def EliminaObjeto(id,tabla):
     elemento = ObtenerElemento(tabla,id)
     elemento.delete()
+
+def CrearAsignaturaDesdeCSV(nombre,pkdif,acr,crgr,crga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
+    CrearAsignatura(
+        nombre=nombre,
+        pkdif=pkdif,
+        acronimo=acr,
+        creditosgr=crgr,
+        creditosga=crga,
+        idasiganterior=idasiganterior,
+        curso=curso,
+        codigo=codigo,
+        semestre=semestre,
+        tipoasig=tipoasig,
+        idmencion=idmencion
+    )

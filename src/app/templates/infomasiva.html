@@ -2,12 +2,11 @@
 
 {% block formulario %}
 
-<form class="col-6">
-    <div class="form-group">
-        <label for="subirarchivo">Sube el archivo con información aquí</label>
-        <input type="file" class="form-control mt-3" id="subirarchivo">
-    </div>
-    
+{% load crispy_forms_tags %}
+
+<form class="col-6 form-group" method="POST" action="/editormasivo" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form | crispy }}
     <button type="submit" class="btn btn-dark mt-4">Subir</button>
 </form>
 
