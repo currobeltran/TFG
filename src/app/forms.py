@@ -114,6 +114,5 @@ class SubirArchivoDatos(Form):
     archivo = FileField(label="Suba aquí su archivo de datos")
     opcion = ChoiceField(choices=(
                             (1,"Añadir asignaturas"),
-                            (2,"Añadir áreas"),
-                            (3,"Añadir años académicos de asignaturas")
+                            (2,"Añadir años académicos de asignaturas")
                         ), label="Elija una opción")

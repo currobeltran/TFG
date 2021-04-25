@@ -140,6 +140,9 @@ def ObtenerElemento(tabla, id):
 
     return ''
 
+def ObtenerAñoAsignaturaUnico(pk,curso):
+    return AñoAsignatura.objects.get(PK=pk,Año=curso)
+
 def ObtenerAñosUnicos():
     ret = []
     x = AñoAsignatura.objects.all()
@@ -212,6 +215,19 @@ def ObtenerAñosAsignatura(pk):
 
 def AsignaturaTieneAño(asig,año):
     pk = asig.PK
+    añosasig = ''
+
+    try:
+        añosasig = AñoAsignatura.objects.get(PK=pk,Año=año)
+    except:
+        print("Consulta inexistente")
+        
+    if añosasig == '':
+        return False
+    else:
+        return añosasig
+
+def AsignaturaTieneAño(pk,año):
     añosasig = ''
 
     try:
@@ -350,6 +366,8 @@ def CrearAñoAsignatura(pk,año,matriculados):
     n = AñoAsignatura(PK=asig,Año=año,Matriculados=matriculados)
     n.save()
 
+    return n.ID
+
 def CrearGrupo(idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,otrostitulos,turno,gruposred,asimilado=0,compartido=0):
     añoasig = ObtenerElemento("Año asignatura", idañoasig)
 
@@ -468,3 +486,19 @@ def CrearAsignaturaDesdeCSV(nombre,pkdif,acr,crgr,crga,idasiganterior,curso,codi
         tipoasig=tipoasig,
         idmencion=idmencion
     )
+
+def RecalculoDeMatriculados(idañoasig):
+    grupos = ObtenerGruposAño(idañoasig)
+    matriculadosTotales = 0
+
+    for x in grupos:
+        matriculadosTotales += (x.Nuevos + x.Repetidores + x.Retenidos + x.LibreConfiguracion + x.OtrosTitulos)
+    
+    return matriculadosTotales
+
+def ModificaMatriculadosAñoAsignatura(id, matriculados):
+    añoasig = AñoAsignatura.objects.get(ID=id)
+
+    añoasig.Matriculados = matriculados
+
+    añoasig.save()

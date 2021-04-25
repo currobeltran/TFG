@@ -120,8 +120,6 @@ def editarBBDD(request):
 
 # InfomasivaBBDD: Vista para la introducción de información masiva en la 
 # Base de Datos.
-# 
-# TODO: Dar funcionalidad, solo está diseñada la interfaz.
 def infomasivaBBDD(request):
     registrado = estaRegistrado(request)
     if not registrado:
@@ -161,10 +159,42 @@ def infomasivaBBDD(request):
                         int(row['IDMencion'])
                     )
                 elif request.POST['opcion']=="2":
-                    print(row)
-                elif request.POST['opcion']=="3":
-                    print(row)
-                # Procesar información y crear objetos
+                    # 1º paso: Crear un añoasignatura con PK, Curso y matriculados=0 (si no está creado)
+                    if not AsignaturaTieneAño(row['PK'], int(row['Curso'])):
+                        idañoasig = CrearAñoAsignatura(row['PK'], int(row['Curso']), 0)
+                    else:
+                        añoasig = ObtenerAñoAsignaturaUnico(row['PK'], int(row['Curso']))
+                        idañoasig = añoasig.ID
+
+                    # 2º paso: Crear grupo con información con información restante
+                    if row['Asimilado'] == "":
+                        asimilado = 0
+                    else:
+                        asimilado = int(row['Asimilado'])
+
+                    if row['Compartido'] == "":
+                        compartido = 0
+                    else:
+                        compartido = int(row['Compartido'])
+
+                    CrearGrupo(
+                        idañoasig=idañoasig,
+                        letra=row['LetraGrupo'],
+                        nuevos=int(row['Nuevos']),
+                        repetidores=int(row['Repetidores']),
+                        retenidos=int(row['Retenidos']),
+                        plazas=int(row['Plazas']),
+                        libreconf=int(row['LibreConfiguracion']),
+                        otrostitulos=int(row['OtrosTitulos']),
+                        turno=row['Turno'],
+                        gruposred=int(row['Subgrupos']),
+                        asimilado=asimilado,
+                        compartido=compartido
+                    )
+
+                    # 3º paso: Recalcular los matriculados de AñoAsignatura
+                    nuevosMatriculados = RecalculoDeMatriculados(idañoasig)
+                    ModificaMatriculadosAñoAsignatura(idañoasig,nuevosMatriculados)
 
     return render(request, 'infomasiva.html', {'registrado':registrado,'form':form})
 
