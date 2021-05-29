@@ -10,6 +10,8 @@ import numpy as np
 import plotly.graph_objs as go
 import csv
 from io import StringIO
+from django.views.generic import ListView
+from django_tables2 import SingleTableView
 
 # Inicio: Vista inicial de la aplicación
 # TODO: Añadir un parámetro al renderizado de index.html para que se pueda
@@ -102,6 +104,11 @@ def buscadorBBDD(request):
         graph2 = alumnos.to_html()
 
         return render(request, 'resultadobusqueda.html', {'registrado':registrado,'graph':graph,'graphi':graph2})
+
+class ListViewPlanDocente(SingleTableView):
+    model = Asignatura
+    table_class = TablaAsignatura
+    template_name = 'plandocente.html'
 
 # EditarBBDD: Vista inicial de la función de edición.
 # 

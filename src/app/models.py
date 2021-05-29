@@ -2,6 +2,7 @@ from django.db import models
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 import math
+import django_tables2 as tables
 
 class Asignatura(models.Model):
     OPCIONES_TIPO_ASIGNATURA = [
@@ -290,17 +291,17 @@ def ConsultaBusquedaBBDD(asig,años,info):
                 
                 numeroGR = 0
                 for x in gr:
-                    numeroGR += gr['GruposReducidos']
+                    numeroGR += x.GruposReducidos
                 infoaño['NumeroGR'] = numeroGR
                 infoaño['NumeroMatriculados'] = objaño.Matriculados
                 
                 if(infoaño['NumeroGA'] != 0):
-                    infoaño['RatioGA'] = objaño.Matriculados/infoaño['NumeroGA']
+                    infoaño['RatioGA'] = '%.3f'%(objaño.Matriculados/infoaño['NumeroGA'])
                 else:
                     infoaño['RatioGA'] = 0
                 
                 if(infoaño['NumeroGR'] != 0):
-                    infoaño['RatioGR'] = objaño.Matriculados/infoaño['NumeroGR']
+                    infoaño['RatioGR'] = '%.3f'%(objaño.Matriculados/infoaño['NumeroGR'])
                 else:
                     infoaño['RatioGR'] = 0
 
@@ -502,3 +503,9 @@ def ModificaMatriculadosAñoAsignatura(id, matriculados):
     añoasig.Matriculados = matriculados
 
     añoasig.save()
+
+class TablaAsignatura(tables.Table):
+    class Meta:
+        model=Asignatura
+        template_name="django_tables2/bootstrap.html"
+        fields=("Nombre", "Acronimo", "CreditosGA", "CreditosGR", "Semestre", "TipoAsignatura")

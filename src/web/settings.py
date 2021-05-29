@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     'plotly',
     'numpy',
+    'django_tables2'
 ]
 
 MIDDLEWARE = [
