@@ -505,7 +505,18 @@ def ModificaMatriculadosAñoAsignatura(id, matriculados):
     añoasig.save()
 
 class TablaAsignatura(tables.Table):
+    Nombre = tables.Column()
+    Acronimo = tables.Column()
+    CreditosGA = tables.Column()
+    CreditosGR = tables.Column()
+    Semestre = tables.Column()
+    TipoAsignatura = tables.Column()
+    AL_Anteriores = tables.Column()
+    AL_Actuales = tables.Column()
+    GA = tables.Column()
+    GR = tables.Column()
+    Rat_T = tables.Column()
+    Rat_P = tables.Column()
+
     class Meta:
-        model=Asignatura
         template_name="django_tables2/bootstrap.html"
-        fields=("Nombre", "Acronimo", "CreditosGA", "CreditosGR", "Semestre", "TipoAsignatura")

@@ -110,6 +110,43 @@ class ListViewPlanDocente(SingleTableView):
     table_class = TablaAsignatura
     template_name = 'plandocente.html'
 
+def planDocente(request):
+    registrado = estaRegistrado(request)
+    asignaturas = Asignatura.objects.values()
+    
+    for i in asignaturas:
+        if i['TipoAsignatura'] == 1:
+            i['TipoAsignatura'] = "Básica"
+        
+        añoasig = AñoAsignatura.objects.filter(PK=i['PK']).values()
+        i['AL_Anteriores'] = añoasig[0]['Matriculados']
+        i['AL_Actuales'] = añoasig[0]['Matriculados']
+
+        gr = ObtenerGruposAño(añoasig[0]['ID'])
+        i['GA'] = len(gr)
+
+        numeroGR = 0
+        for x in gr:
+            numeroGR += x.GruposReducidos
+
+        i['GR'] = numeroGR
+        
+        if(i['GA'] != 0):
+            i['Rat_T'] = '%.3f'%(añoasig[0]['Matriculados']/i['GA'] )
+        else:
+            i['Rat_T'] = 0
+        
+        if(i['GR'] != 0):
+            i['Rat_P'] = '%.3f'%(añoasig[0]['Matriculados']/i['GR'] )
+        else:
+            i['Rat_P'] = 0
+        
+        numeroGR = 0
+
+    tabla = TablaAsignatura(asignaturas)
+
+    return render(request, "plandocente.html", {'registrado': registrado, 'table':tabla})
+
 # EditarBBDD: Vista inicial de la función de edición.
 # 
 # Dicha función tendrá la capacidad tanto de añadir, eliminar y editar 

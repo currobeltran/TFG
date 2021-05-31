@@ -13,5 +13,5 @@ urlpatterns = [
     path('formularioedicion', views.formularioEdicion, name='formularioedicion'),
     path('formularioedicion/nuevo',views.formularioEdicion, name='formularioedicionnuevo'),
     path('eliminaregistro',views.eliminaRegistro,name='eliminaregistro'),
-    path("plandocente/", views.ListViewPlanDocente.as_view())
+    path("plandocente/", views.planDocente, name='plandocente')
 ]
