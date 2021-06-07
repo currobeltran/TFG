@@ -2,10 +2,24 @@
 
 {% block central %}
 
-    <!-- Para añadir: Un elemento que despliegue una descripción de como funciona este menú -->
-    <div class="container-fluid mt-3 row">
-        <button class="btn btn-dark col-2">¿Necesitas ayuda?</button>
+    <div class="container-fluid mt-3 ms-3">
+        <button class="btn btn-dark row col-2" id="ayuda">¿Necesitas ayuda?</button>
+        <p class="mt-2 col-5 row" id="parrafoayuda" style="display: none;">
+            Este es el buscador de información de la aplicación. Existen 
+            2 opciones dentro de este buscador, o generar el plan docente
+            de manera automática (para lo que habrá que pulsar el botón
+            correspondiente), o introducir los parámetros adecuados para
+            encontrar la información deseada. Habrá que seleccionar una o 
+            varias asignaturas, un curso académico, y la información que 
+            queremos obtener de los alumnos o grupos de dicho curso 
+            académico. También se debe seleccionar si se desea la información
+            en forma de tabla o en forma de gráfica.
+        </p>
     </div>
+
+    <form class="container-fluid mt-3 ms-1" action="/plandocente" method="GET">
+        <button class="btn btn-dark col-2">Generar plan docente</button>
+    </form>
 
     <div class="container-fluid mt-4 row">
         <div class="col">

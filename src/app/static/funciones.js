@@ -30,4 +30,15 @@ $(document).ready(function(){
             document.getElementById('eliminar').style.display = 'none';
         }
     })
+
+    $('#ayuda').click(function(){
+        var elemento = document.getElementById("parrafoayuda")
+
+        if(window.getComputedStyle(elemento).display === "none"){
+            $('#parrafoayuda').show()
+        }
+        else{
+            $('#parrafoayuda').hide()
+        }
+    })
 })

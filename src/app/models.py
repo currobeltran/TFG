@@ -506,17 +506,17 @@ def ModificaMatriculadosAñoAsignatura(id, matriculados):
 
 class TablaAsignatura(tables.Table):
     Nombre = tables.Column()
-    Acronimo = tables.Column()
-    CreditosGA = tables.Column()
-    CreditosGR = tables.Column()
+    Acronimo = tables.Column(verbose_name="Acrónimo")
+    CreditosGA = tables.Column(verbose_name="Créditos GA")
+    CreditosGR = tables.Column(verbose_name="Créditos GR")
     Semestre = tables.Column()
-    TipoAsignatura = tables.Column()
-    AL_Anteriores = tables.Column()
-    AL_Actuales = tables.Column()
-    GA = tables.Column()
-    GR = tables.Column()
-    Rat_T = tables.Column()
-    Rat_P = tables.Column()
+    TipoAsignatura = tables.Column(verbose_name="Tipo de Asignatura")
+    AL_Anteriores = tables.Column(verbose_name="Alumnos curso anterior")
+    AL_Actuales = tables.Column(verbose_name="Alumnos curso actual")
+    GA = tables.Column(verbose_name="Grupos amplios")
+    GR = tables.Column(verbose_name="Grupos reducidos")
+    Rat_T = tables.Column(verbose_name="Ratio Teoría")
+    Rat_P = tables.Column(verbose_name="Ratio Prácticas")
 
     class Meta:
         template_name="django_tables2/bootstrap.html"
