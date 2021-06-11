@@ -520,3 +520,15 @@ class TablaAsignatura(tables.Table):
 
     class Meta:
         template_name="django_tables2/bootstrap.html"
+
+class TablaAsignaturaDatos(tables.Table):
+    Letra = tables.Column()
+    Nuevos = tables.Column()
+    Repetidores = tables.Column()
+    Retenidos = tables.Column()
+    Plazas = tables.Column()
+    LibreConfiguracion = tables.Column(verbose_name="Libre Configuración")
+    OtrosTitulos = tables.Column(verbose_name="Otros títulos")
+
+    class Meta:
+        template_name="django_tables2/bootstrap.html"

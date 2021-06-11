@@ -50,65 +50,68 @@ def buscadorBBDD(request):
 
         asgbusqueda = request.POST.getlist('asignaturas[]')
         if not asgbusqueda:
-            registros = ObtenerRegistros("Asignatura")
-            
+            registros = asg
 
         añosbusqueda = request.POST.getlist('añoacademico[]')
         if not añosbusqueda:
-            añosbusqueda = ObtenerAñosUnicos()
+            añosbusqueda = años
         
         infobusqueda = request.POST.getlist('info[]')
         if not infobusqueda:
-            infobusqueda = ObtenerAtributosTabla("Grupo")
+            infobusqueda = info
         
         a = ConsultaBusquedaBBDD(asgbusqueda,añosbusqueda,infobusqueda)
 
-        curso = go.Figure(
-            data=[
-                go.Table(
-                    header=dict(values=[
-                            'Asignatura','Curso', 'AC', 'Cr.GA', 'Cr.GR', 'Cuat', 'Tipo'
-                    ]),
-                    cells=dict(values=[
-                            [a[x].get('Nombre') for x in a], 
-                            [a[x].get('Curso') for x in a], 
-                            [a[x].get('Acronimo') for x in a],
-                            [a[x].get('Creditos Grupo Amplio') for x in a],
-                            [a[x].get('Creditos Grupo Reducido') for x in a],
-                            [a[x].get('Semestre') for x in a],
-                            [a[x].get('Tipo de Asignatura') for x in a]
-                    ])
-                )
-            ]
-        )
-        graph = curso.to_html() 
+        listadatos = []
+        for i in a:
+            elemento = {}
+            elemento['nombre'] = a[i].get('Nombre')
+            elemento['años'] = []
+            añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
+            grupos = []
 
-        alumnos = go.Figure(
-            data=[
-                go.Table(
-                    header=dict(values=[
-                        'Curso', 'AL', 'GA', 'GR', 'Rat T', 'Rat P'
-                    ]),
-                    cells=dict(values=[
-                        [añosbusqueda[x] for x in range(0, len(añosbusqueda))],
-                        [a[x].get('InfoAño').get('NumeroMatriculados') for x in a],
-                        [a[x].get('InfoAño').get('NumeroGA') for x in a],
-                        [a[x].get('InfoAño').get('NumeroGR') for x in a],
-                        [a[x].get('InfoAño').get('RatioGA') for x in a],
-                        [a[x].get('InfoAño').get('RatioGR') for x in a],
-                    ])
-                )
-            ]
-        )
+            for j in añosbusqueda:
+                año1 = j[0] + j[1] + j[2] + j[3]
+                año2 = j[4] + j[5] + j[6] + j[7]
+                
+                añoelemento = año1 + "/" + año2
+                elemento['años'].append(añoelemento)
 
-        graph2 = alumnos.to_html()
+                for añoasig in añosAsignatura:
+                    if str(añoasig.Año) == str(j):
+                        grupos = ObtenerGruposAño(añoasig.ID)
 
-        return render(request, 'resultadobusqueda.html', {'registrado':registrado,'graph':graph,'graphi':graph2})
+            # Añadir datos de tabla
+            objTabla = []
+            for g in grupos:
+                fila = {}
+                if 'Letra' in infobusqueda:
+                    fila['Letra'] = g.Letra
+                if 'Nuevos' in infobusqueda:
+                    fila['Nuevos'] = g.Nuevos
+                if 'Repetidores' in infobusqueda:
+                    fila['Repetidores'] = g.Repetidores
+                if 'Retenidos' in infobusqueda:
+                    fila['Retenidos'] = g.Retenidos
+                if 'Plazas' in infobusqueda:
+                    fila['Plazas'] = g.Plazas
+                if 'LibreConfiguracion' in infobusqueda:
+                    fila['LibreConfiguracion'] = g.Plazas
+                if 'OtrosTitulos' in infobusqueda:
+                    fila['OtrosTitulos'] = g.OtrosTitulos
 
-class ListViewPlanDocente(SingleTableView):
-    model = Asignatura
-    table_class = TablaAsignatura
-    template_name = 'plandocente.html'
+                objTabla.append(fila)
+            
+            elementoTabla = TablaAsignaturaDatos(objTabla)
+            elemento['tabla'] = elementoTabla
+
+            listadatos.append(elemento)
+
+        return render(request, "resultadobusqueda.html", {
+            'registrado': registrado, 
+            'listadatos': listadatos
+        })
+
 
 def planDocente(request):
     registrado = estaRegistrado(request)

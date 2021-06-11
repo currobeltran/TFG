@@ -2,13 +2,19 @@
 
 {% block central %}
 
-    <div class="row">
-        <div class="col-5">
-            {{ graph|safe }}
+{% load render_table from django_tables2 %}
+
+{% for dato in listadatos %}
+    {% for año in dato.años %}
+        <div class="row mt-4">
+            <h2>{{ dato.nombre }} - {{ año }}</h2>
         </div>
-        <div class="col-5">
-            {{ graphi|safe }}
+
+        <div class="row mt-4">
+            {% render_table dato.tabla %}
         </div>
-    </div>
+    {% endfor %}
+
+{% endfor %}
 
 {% endblock %}
