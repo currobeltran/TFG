@@ -4,17 +4,25 @@
 
     <div class="container-fluid mt-3 ms-3">
         <button class="btn btn-dark row col-2" id="ayuda">¿Necesitas ayuda?</button>
-        <p class="mt-2 col-5 row" id="parrafoayuda" style="display: none;">
-            Este es el buscador de información de la aplicación. Existen 
-            2 opciones dentro de este buscador, o generar el plan docente
-            de manera automática (para lo que habrá que pulsar el botón
-            correspondiente), o introducir los parámetros adecuados para
-            encontrar la información deseada. Habrá que seleccionar una o 
-            varias asignaturas, un curso académico, y la información que 
-            queremos obtener de los alumnos o grupos de dicho curso 
-            académico. También se debe seleccionar si se desea la información
-            en forma de tabla o en forma de gráfica.
-        </p>
+        <div class="mt-2 col-5 row" id="parrafoayuda" style="display: none;">
+            <p>
+                Este es el buscador de información de la aplicación. Existen 
+                2 opciones dentro de este buscador, o generar el plan docente
+                de manera automática (para lo que habrá que pulsar el botón
+                correspondiente), o introducir los parámetros adecuados para
+                encontrar la información deseada. Habrá que seleccionar una o 
+                varias asignaturas, un curso académico, y la información que 
+                queremos obtener de los alumnos o grupos de dicho curso 
+                académico. También se debe seleccionar si se desea la información
+                en forma de tabla o en forma de gráfica.
+            </p>
+            <p>
+                En caso de seleccionar el modo gráfica, hay que tener en cuenta
+                que únicamente se mostrará la información de un único valor de 
+                información (si se escogen más de uno, se escoge el último
+                seleccionado)
+            </p>
+        </div>
     </div>
 
     <form class="container-fluid mt-3 ms-1" action="/plandocente" method="GET">
@@ -85,11 +93,11 @@
         <div class="container-fluid mt-5 row">
             <div class="col">
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="tabla" name="customRadio" class="custom-control-input">
+                    <input type="radio" name="customRadio" id="tabla" value="tabla" class="custom-control-input">
                     <label class="custom-control-label" for="tabla">Modo tabla</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="grafica" name="customRadio" class="custom-control-input">
+                    <input type="radio" name="customRadio" id="grafica" value="grafica" class="custom-control-input">
                     <label class="custom-control-label" for="grafica">Modo gráfica</label>
                 </div>
             </div>

@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block central %}
+    <div class="row mt-4">
+      <h2>{{ datoAMirar }}</h2>
+    </div>
+    
+    <canvas id="graficaSolicitada"></canvas>
+
+    <script>
+      var ctx = document.getElementById('graficaSolicitada').getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: {{ listaAños|safe }},
+              datasets: {{ data|safe }}
+          },
+          options: {
+            responsive: true
+          }
+      });
+    </script>
+{% endblock %}

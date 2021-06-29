@@ -12,6 +12,9 @@ import csv
 from io import StringIO
 from django.views.generic import ListView
 from django_tables2 import SingleTableView
+import random
+import datetime
+import time
 
 # Inicio: Vista inicial de la aplicación
 # TODO: Añadir un parámetro al renderizado de index.html para que se pueda
@@ -42,6 +45,11 @@ def buscadorBBDD(request):
         años = ObtenerAñosUnicos()
         info = ObtenerAtributosTabla("Grupo")
 
+        info.remove("Asimilado")
+        info.remove("Compartido")
+        info.remove("Turno")
+        info.remove("GruposReducidos")
+
         return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
     else:
         asg = ObtenerRegistros("Asignatura")
@@ -63,55 +71,108 @@ def buscadorBBDD(request):
         a = ConsultaBusquedaBBDD(asgbusqueda,añosbusqueda,infobusqueda)
 
         listadatos = []
-        for i in a:
-            elemento = {}
-            elemento['nombre'] = a[i].get('Nombre')
-            elemento['años'] = []
-            añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
-            grupos = []
+        listaaños = []
+        modoSeleccionado = request.POST.get('customRadio')
+        datoAMirar = infobusqueda[infobusqueda.__len__()-1]
 
+        for i in a:
+            if modoSeleccionado == 'tabla':
+                elemento = {}
+                elemento['nombre'] = a[i].get('Nombre')
+                elemento['años'] = []
+                añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
+                grupos = []
+
+                for j in añosbusqueda:
+                    año1 = j[0] + j[1] + j[2] + j[3]
+                    año2 = j[4] + j[5] + j[6] + j[7]
+                    
+                    añoelemento = año1 + "/" + año2
+                    elemento['años'].append(añoelemento)
+
+                    for añoasig in añosAsignatura:
+                        if str(añoasig.Año) == str(j):
+                            grupos = ObtenerGruposAño(añoasig.ID)
+
+                # Añadir datos de tabla
+                objTabla = []
+                for g in grupos:
+                    fila = {}
+                    if 'Letra' in infobusqueda:
+                        fila['Letra'] = g.Letra
+                    if 'Nuevos' in infobusqueda:
+                        fila['Nuevos'] = g.Nuevos
+                    if 'Repetidores' in infobusqueda:
+                        fila['Repetidores'] = g.Repetidores
+                    if 'Retenidos' in infobusqueda:
+                        fila['Retenidos'] = g.Retenidos
+                    if 'Plazas' in infobusqueda:
+                        fila['Plazas'] = g.Plazas
+                    if 'LibreConfiguracion' in infobusqueda:
+                        fila['LibreConfiguracion'] = g.LibreConfiguracion
+                    if 'OtrosTitulos' in infobusqueda:
+                        fila['OtrosTitulos'] = g.OtrosTitulos
+
+                    objTabla.append(fila)
+                
+                elementoTabla = TablaAsignaturaDatos(objTabla)
+                elemento['tabla'] = elementoTabla
+
+                listadatos.append(elemento)
+
+            else:
+                # Seleccionar año de búsqueda
+                elemento = {}
+                elemento['label'] = a[i].get('Nombre')
+                añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
+                grupos = []
+                datosGrafica = []
+                cantidad = 0
+
+                for j in añosbusqueda:
+                    for añoasig in añosAsignatura:
+                        if str(añoasig.Año) == str(j):
+                            grupos = ObtenerGruposAño(añoasig.ID)
+
+                    cantidad = 0
+                    # Seleccionar grupos de año
+                    for g in grupos:
+                        if 'Nuevos' in infobusqueda:
+                            cantidad += g.Nuevos
+                        elif 'Repetidores' in infobusqueda:
+                            cantidad += g.Repetidores
+                        elif 'Retenidos' in infobusqueda:
+                            cantidad += g.Retenidos
+                        elif 'Plazas' in infobusqueda:
+                            cantidad += g.Plazas
+                        elif 'LibreConfiguracion' in infobusqueda:
+                            cantidad += g.LibreConfiguracion
+                        elif 'OtrosTitulos' in infobusqueda:
+                            cantidad += g.OtrosTitulos
+                    
+                    datosGrafica.append(cantidad)
+                
+                elemento['data'] = datosGrafica
+                valorR = random.randint(0,255)
+                valorG = random.randint(0,255)
+                valorB = random.randint(0,255)
+                elemento['backgroundColor'] = 'rgba('+str(valorR)+','+str(valorG)+','+str(valorB)+', 0.2)'
+                listadatos.append(elemento)
+
+        if modoSeleccionado == 'tabla':
+            return render(request, "resultadobusqueda.html", {
+                'registrado': registrado,   
+                'listadatos': listadatos
+            })
+        else:
             for j in añosbusqueda:
                 año1 = j[0] + j[1] + j[2] + j[3]
                 año2 = j[4] + j[5] + j[6] + j[7]
                 
                 añoelemento = año1 + "/" + año2
-                elemento['años'].append(añoelemento)
+                listaaños.append(añoelemento)
 
-                for añoasig in añosAsignatura:
-                    if str(añoasig.Año) == str(j):
-                        grupos = ObtenerGruposAño(añoasig.ID)
-
-            # Añadir datos de tabla
-            objTabla = []
-            for g in grupos:
-                fila = {}
-                if 'Letra' in infobusqueda:
-                    fila['Letra'] = g.Letra
-                if 'Nuevos' in infobusqueda:
-                    fila['Nuevos'] = g.Nuevos
-                if 'Repetidores' in infobusqueda:
-                    fila['Repetidores'] = g.Repetidores
-                if 'Retenidos' in infobusqueda:
-                    fila['Retenidos'] = g.Retenidos
-                if 'Plazas' in infobusqueda:
-                    fila['Plazas'] = g.Plazas
-                if 'LibreConfiguracion' in infobusqueda:
-                    fila['LibreConfiguracion'] = g.Plazas
-                if 'OtrosTitulos' in infobusqueda:
-                    fila['OtrosTitulos'] = g.OtrosTitulos
-
-                objTabla.append(fila)
-            
-            elementoTabla = TablaAsignaturaDatos(objTabla)
-            elemento['tabla'] = elementoTabla
-
-            listadatos.append(elemento)
-
-        return render(request, "resultadobusqueda.html", {
-            'registrado': registrado, 
-            'listadatos': listadatos
-        })
-
+            return render(request,'grafica.html', {'data': listadatos, 'datoAMirar':datoAMirar, 'listaAños':listaaños, 'registrado':registrado})
 
 def planDocente(request):
     registrado = estaRegistrado(request)
