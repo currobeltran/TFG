@@ -171,7 +171,8 @@ def buscadorBBDD(request):
                 
                 añoelemento = año1 + "/" + año2
                 listaaños.append(añoelemento)
-
+            
+            listaaños.sort()
             return render(request,'grafica.html', {'data': listadatos, 'datoAMirar':datoAMirar, 'listaAños':listaaños, 'registrado':registrado})
 
 def planDocente(request):
