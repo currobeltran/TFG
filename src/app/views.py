@@ -77,48 +77,47 @@ def buscadorBBDD(request):
 
         for i in a:
             if modoSeleccionado == 'tabla':
-                elemento = {}
-                elemento['nombre'] = a[i].get('Nombre')
-                elemento['años'] = []
                 añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
-                grupos = []
 
                 for j in añosbusqueda:
                     año1 = j[0] + j[1] + j[2] + j[3]
                     año2 = j[4] + j[5] + j[6] + j[7]
                     
                     añoelemento = año1 + "/" + año2
-                    elemento['años'].append(añoelemento)
 
                     for añoasig in añosAsignatura:
                         if str(añoasig.Año) == str(j):
+                            elemento = {}
+                            elemento['nombre'] = a[i].get('Nombre')
+                            elemento['año'] = añoelemento
+                            elemento['id'] = a[i].get('PK')+año1+año2
+
                             grupos = ObtenerGruposAño(añoasig.ID)
 
-                # Añadir datos de tabla
-                objTabla = []
-                for g in grupos:
-                    fila = {}
-                    if 'Letra' in infobusqueda:
-                        fila['Letra'] = g.Letra
-                    if 'Nuevos' in infobusqueda:
-                        fila['Nuevos'] = g.Nuevos
-                    if 'Repetidores' in infobusqueda:
-                        fila['Repetidores'] = g.Repetidores
-                    if 'Retenidos' in infobusqueda:
-                        fila['Retenidos'] = g.Retenidos
-                    if 'Plazas' in infobusqueda:
-                        fila['Plazas'] = g.Plazas
-                    if 'LibreConfiguracion' in infobusqueda:
-                        fila['LibreConfiguracion'] = g.LibreConfiguracion
-                    if 'OtrosTitulos' in infobusqueda:
-                        fila['OtrosTitulos'] = g.OtrosTitulos
+                            # Añadir datos de tabla
+                            objTabla = []
+                            for g in grupos:
+                                fila = {}
+                                if 'Letra' in infobusqueda:
+                                    fila['Letra'] = g.Letra
+                                if 'Nuevos' in infobusqueda:
+                                    fila['Nuevos'] = g.Nuevos
+                                if 'Repetidores' in infobusqueda:
+                                    fila['Repetidores'] = g.Repetidores
+                                if 'Retenidos' in infobusqueda:
+                                    fila['Retenidos'] = g.Retenidos
+                                if 'Plazas' in infobusqueda:
+                                    fila['Plazas'] = g.Plazas
+                                if 'LibreConfiguracion' in infobusqueda:
+                                    fila['Libre Configuracion'] = g.LibreConfiguracion
+                                if 'OtrosTitulos' in infobusqueda:
+                                    fila['Otros Titulos'] = g.OtrosTitulos
 
-                    objTabla.append(fila)
-                
-                elementoTabla = TablaAsignaturaDatos(objTabla)
-                elemento['tabla'] = elementoTabla
+                                objTabla.append(fila)
+                            
+                            elemento['tabla'] = objTabla
 
-                listadatos.append(elemento)
+                            listadatos.append(elemento)
 
             else:
                 # Seleccionar año de búsqueda
@@ -178,39 +177,56 @@ def buscadorBBDD(request):
 def planDocente(request):
     registrado = estaRegistrado(request)
     asignaturas = Asignatura.objects.values()
+    listaAsignaturas = []
+    
+    añosUnicos = ObtenerAñosUnicos()
+    cursos = [añosUnicos[0],añosUnicos[1]]
     
     for i in asignaturas:
-        if i['TipoAsignatura'] == 1:
-            i['TipoAsignatura'] = "Básica"
-        
-        añoasig = AñoAsignatura.objects.filter(PK=i['PK']).values()
-        i['AL_Anteriores'] = añoasig[0]['Matriculados']
-        i['AL_Actuales'] = añoasig[0]['Matriculados']
+        elemento = {}
+        elemento['Nombre'] = i.get('Nombre')
+        elemento['Acronimo'] = i.get('Acronimo')
+        elemento['CRGA'] = i.get('CreditosGA')
+        elemento['CRGR'] = i.get('CreditosGR')
+        elemento['Cuatrimestre'] = i.get('Semestre')
+        elemento['Tipo'] = i.get('TipoAsignatura')
 
-        gr = ObtenerGruposAño(añoasig[0]['ID'])
-        i['GA'] = len(gr)
+        añoAsignatura1 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[0])
+        añoAsignatura2 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[1])
 
-        numeroGR = 0
-        for x in gr:
-            numeroGR += x.GruposReducidos
+        elemento['AlumnosAnteriorespasado'] = -1 # Actualizar con datos del curso anterior
+        elemento['AlumnosActualespasado'] = añoAsignatura1.Matriculados
+        elemento['AlumnosAnterioresactual'] = añoAsignatura1.Matriculados
+        elemento['AlumnosActualesactual'] = añoAsignatura2.Matriculados
 
-        i['GR'] = numeroGR
-        
-        if(i['GA'] != 0):
-            i['Rat_T'] = '%.3f'%(añoasig[0]['Matriculados']/i['GA'] )
-        else:
-            i['Rat_T'] = 0
-        
-        if(i['GR'] != 0):
-            i['Rat_P'] = '%.3f'%(añoasig[0]['Matriculados']/i['GR'] )
-        else:
-            i['Rat_P'] = 0
-        
-        numeroGR = 0
+        grupos1 = ObtenerGruposAño(añoAsignatura1.ID)
+        grupos2 = ObtenerGruposAño(añoAsignatura2.ID)
 
-    tabla = TablaAsignatura(asignaturas)
+        elemento['GruposGrandespasado'] = grupos1.__len__()
+        elemento['GruposGrandesactual'] = grupos2.__len__()
+        elemento['GruposReducidospasado'] = 0
+        elemento['GruposReducidosactual'] = 0
 
-    return render(request, "plandocente.html", {'registrado': registrado, 'table':tabla})
+        for g1 in grupos1:
+            elemento['GruposReducidospasado'] += g1.GruposReducidos
+
+        for g2 in grupos2:
+            elemento['GruposReducidosactual'] += g2.GruposReducidos
+
+        elemento['RatioTeoriapasado'] = añoAsignatura1.Matriculados/grupos1.__len__()
+        elemento['RatioPracticaspasado'] = añoAsignatura1.Matriculados/elemento['GruposReducidospasado']
+        elemento['RatioTeoriaactual'] = añoAsignatura2.Matriculados/grupos2.__len__()
+        elemento['RatioPracticasactual'] = añoAsignatura2.Matriculados/elemento['GruposReducidosactual']
+
+        elemento['Diferencia'] = añoAsignatura2.Matriculados - añoAsignatura1.Matriculados
+        elemento['IncrementoTeoria'] = (grupos2.__len__()-grupos1.__len__())*i.get('CreditosGA')
+        elemento['IncrementoPractica'] = (elemento['GruposReducidosactual']-elemento['GruposReducidospasado'])*i.get('CreditosGR')
+        elemento['IncrementoTotal'] = elemento['IncrementoTeoria']+elemento['IncrementoPractica']
+        elemento['Creditos'] = (grupos2.__len__()*i.get('CreditosGA'))+(elemento['GruposReducidosactual']*i.get('CreditosGR'))
+
+        listaAsignaturas.append(elemento)
+
+    return render(request, "plandocente.html", {'registrado': registrado, 'table':listaAsignaturas})
 
 # EditarBBDD: Vista inicial de la función de edición.
 # 

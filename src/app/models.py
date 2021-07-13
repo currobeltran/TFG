@@ -503,32 +503,3 @@ def ModificaMatriculadosAñoAsignatura(id, matriculados):
     añoasig.Matriculados = matriculados
 
     añoasig.save()
-
-class TablaAsignatura(tables.Table):
-    Nombre = tables.Column()
-    Acronimo = tables.Column(verbose_name="Acrónimo")
-    CreditosGA = tables.Column(verbose_name="Créditos GA")
-    CreditosGR = tables.Column(verbose_name="Créditos GR")
-    Semestre = tables.Column()
-    TipoAsignatura = tables.Column(verbose_name="Tipo de Asignatura")
-    AL_Anteriores = tables.Column(verbose_name="Alumnos curso anterior")
-    AL_Actuales = tables.Column(verbose_name="Alumnos curso actual")
-    GA = tables.Column(verbose_name="Grupos amplios")
-    GR = tables.Column(verbose_name="Grupos reducidos")
-    Rat_T = tables.Column(verbose_name="Ratio Teoría")
-    Rat_P = tables.Column(verbose_name="Ratio Prácticas")
-
-    class Meta:
-        template_name="django_tables2/bootstrap.html"
-
-class TablaAsignaturaDatos(tables.Table):
-    Letra = tables.Column()
-    Nuevos = tables.Column()
-    Repetidores = tables.Column()
-    Retenidos = tables.Column()
-    Plazas = tables.Column()
-    LibreConfiguracion = tables.Column(verbose_name="Libre Configuración")
-    OtrosTitulos = tables.Column(verbose_name="Otros títulos")
-
-    class Meta:
-        template_name="django_tables2/bootstrap.html"
