@@ -1,10 +1,25 @@
 from .models import *
-from django.forms import ModelForm, PasswordInput, CharField, Form, FileField, ChoiceField, IntegerField, ModelChoiceField, FloatField
+from django.forms import ModelForm, PasswordInput, CharField, Form, FileField, ChoiceField, IntegerField, ModelChoiceField, FloatField, ModelMultipleChoiceField
 from django.contrib.auth.models import User
 from allauth.account.forms import LoginForm
 from allauth.account.utils import perform_login
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+
+class ModelChoiceFieldEditado(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.Nombre
+
+class ModelMultipleChoiceFieldEditado(ModelMultipleChoiceField):
+    def label_from_instance(self,obj):
+        return obj.Nombre
+
+class ModelChoiceAñoAsignatura(ModelChoiceField):
+    def label_from_instance(self, obj):
+        stringAño = str(obj.Año)
+        añoFormateado = stringAño[0] + stringAño[1] + stringAño[2] + stringAño[3] + "/" + stringAño[4] + stringAño[5] + stringAño[6] + stringAño[7]
+
+        return añoFormateado + " " + obj.PK.Nombre
 
 class AsignaturaForm(ModelForm):
     class Meta:
@@ -26,13 +41,14 @@ class AsignaturaForm(ModelForm):
     CreditosGR = FloatField(label="Créditos grupo reducido")
     CreditosGA = FloatField(label="Créditos grupo amplio")
     Codigo = CharField(max_length=7,min_length=7)
-    # No se que se muestre el nombre de la opción en vez de su ID
-    IDMencion = ModelChoiceField(queryset=Mencion.objects, label="Mención")
+    IDMencion = ModelChoiceFieldEditado(queryset=Mencion.objects, label="Mención")
 
 class AreaForm(ModelForm):
     class Meta:
         model = Area
         fields = ['Nombre','Departamento','Acronimo','AsignaturaArea']
+    
+    AsignaturaArea = ModelMultipleChoiceFieldEditado(queryset=Asignatura.objects, label="Asignaturas del área")
 
 class MencionForm(ModelForm):
     class Meta:
@@ -43,11 +59,15 @@ class TituloForm(ModelForm):
     class Meta:
         model = Titulo
         fields = ['Codigo', 'Nombre', 'UmbralGR', 'UmbralGA', 'AsignaturaTitulo']
+    
+    AsignaturaTitulo = ModelMultipleChoiceFieldEditado(queryset=Asignatura.objects, label="Asignaturas del título")
 
 class AñoAsignaturaForm(ModelForm):
     class Meta:
         model = AñoAsignatura
         fields = ['PK', 'Año', 'Matriculados']
+    
+    PK = ModelChoiceFieldEditado(queryset=Asignatura.objects, label="Asignatura")
 
 class GrupoForm(ModelForm):
     class Meta:
@@ -66,6 +86,8 @@ class GrupoForm(ModelForm):
             'Turno',
             'GruposReducidos',
         ]
+    
+    IDAñoAsignatura = ModelChoiceAñoAsignatura(queryset=AñoAsignatura.objects, label="Año universitario y asignatura al que pertenece el grupo")
 
 class LoginFormPersonalizado(LoginForm):
     def __init__(self, *args, **kwargs):

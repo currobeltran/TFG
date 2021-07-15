@@ -103,13 +103,25 @@ def ObtenerRegistros(tabla):
     elif tabla == "Año asignatura":
         x = AñoAsignatura.objects.all()
         for i in x:
-            ret.append({'id':i.ID, 'nombre':i.Año})
+            nombreAsignatura = i.PK.Nombre
+
+            stringAño = str(i.Año)
+            añoFormateado = stringAño[0] + stringAño[1] + stringAño[2] + stringAño[3] + "/" + stringAño[4] + stringAño[5] + stringAño[6] + stringAño[7]
+            
+            ret.append({'id':i.ID, 'nombre':añoFormateado + " " + nombreAsignatura})
         return ret
 
     elif tabla == "Grupo":
         x = Grupo.objects.all()
         for i in x:
-            ret.append({'id':i.ID, 'nombre':i.Letra})
+            añoAsignatura = i.IDAñoAsignatura.Año
+
+            stringAño = str(añoAsignatura)
+            añoFormateado = stringAño[0] + stringAño[1] + stringAño[2] + stringAño[3] + "/" + stringAño[4] + stringAño[5] + stringAño[6] + stringAño[7]
+
+            nombreAsignatura = i.IDAñoAsignatura.PK.Nombre
+
+            ret.append({'id':i.ID, 'nombre':añoFormateado + " " + nombreAsignatura + " Grupo " + i.Letra})
         return ret
 
     return ret
@@ -387,6 +399,10 @@ def CrearGrupo(idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,ot
         GruposReducidos=gruposred
     )
     n.save()
+
+    matriculadosAAñadir = int(nuevos)+int(repetidores)+int(retenidos)+int(libreconf)+int(otrostitulos)
+    añoasig.Matriculados += matriculadosAAñadir
+    añoasig.save()
 
 def ModificaAsignatura(id,pkdif,nombre,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion):
     mencion = ObtenerElemento("Mención", idmencion)

@@ -21,7 +21,7 @@ import time
 # personalizar el mensaje que aparece
 def inicio(request):
     registrado = estaRegistrado(request)
-    return render(request, 'index.html', {'registrado':registrado})
+    return render(request, 'index.html', {'registrado':registrado, 'msg':"Bienvenido a la aplicación"})
 
 # BuscadorBBDD: Vista que nos permitirá realizar la operación de búsqueda y
 # visualización de información en la base de datos con el objetivo de obtener 
@@ -48,7 +48,6 @@ def buscadorBBDD(request):
         info.remove("Asimilado")
         info.remove("Compartido")
         info.remove("Turno")
-        info.remove("GruposReducidos")
 
         return render(request, 'buscador.html', {'registrado':registrado,'asignaturas':asg,'años':años,'info':info})
     else:
@@ -112,6 +111,8 @@ def buscadorBBDD(request):
                                     fila['Libre Configuracion'] = g.LibreConfiguracion
                                 if 'OtrosTitulos' in infobusqueda:
                                     fila['Otros Titulos'] = g.OtrosTitulos
+                                if 'GruposReducidos' in infobusqueda:
+                                    fila['Grupos Reducidos'] = g.GruposReducidos
 
                                 objTabla.append(fila)
                             
@@ -180,8 +181,11 @@ def planDocente(request):
     listaAsignaturas = []
     
     añosUnicos = ObtenerAñosUnicos()
-    cursos = [añosUnicos[0],añosUnicos[1]]
+    if añosUnicos.__len__()<2 :
+        return render(request, 'index.html', {'registrado':registrado, 'msg':"Error: No existen datos suficientes para generar el plan docente"})
     
+    cursos = [añosUnicos[1],añosUnicos[0]]
+
     for i in asignaturas:
         elemento = {}
         elemento['Nombre'] = i.get('Nombre')

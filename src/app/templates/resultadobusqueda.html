@@ -15,12 +15,7 @@
     <script>
         var tabla = new Tabulator("#tablilla{{ dato.id }}", {
             data:{{ dato.tabla|safe }},
-            autoColumns:true,
-            autoColumnsDefinitions:{
-                Letra: {editor:"input"}, 
-                Nuevos: {editor:"input"}, 
-                Repetidores: {editor:"input"}, 
-            },
+            autoColumns:true
         })
     </script>
 {% endfor %}
