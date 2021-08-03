@@ -13,5 +13,6 @@ urlpatterns = [
     path('formularioedicion', views.formularioEdicion, name='formularioedicion'),
     path('formularioedicion/nuevo',views.formularioEdicion, name='formularioedicionnuevo'),
     path('eliminaregistro',views.eliminaRegistro,name='eliminaregistro'),
-    path("plandocente/", views.planDocente, name='plandocente')
+    path("plandocente/", views.planDocente, name='plandocente'),
+    path("predicciones", views.predicciones, name='predicciones')
 ]

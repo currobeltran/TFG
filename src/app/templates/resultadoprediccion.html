@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+
+{% block central %}
+    <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+
+    <div class="row ms-5 mt-3">
+        <h3 class="row mt-2">{{ nombreAsignatura }} - {{ cursoProximo }}</h3>
+        <p class="row mt-2">Coeficiente de determinación de la regresión lineal: {{ precision }}</p>
+        <p class="row">(A partir del año presente en el título se sigue la predicción de la regresión lineal)</p>
+    </div>
+
+    <div class="row">
+        <!-- Gráfica -->
+        <div class="col-6 ms-4 mt-2">
+            <canvas id="graficaSolicitada"></canvas>
+        </div>
+    
+        <!-- Tablas col-5 -->
+        <div class="col-5 ms-2 mt-2">
+            <div class="col-10">
+                <h4>Datos del curso {{ cursoActual }}</h4>
+                <div id="tablaActual" class="mt-2"></div>
+            </div>
+
+            <div class="col-10 mt-4">
+                <h4>Datos estimados para el curso {{ cursoProximo }}</h4>
+                <div id="tablaPrediccion" class="mt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var ctx = document.getElementById('graficaSolicitada').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ listaAños|safe }},
+                datasets: {{ data|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        var tabla = new Tabulator("#tablaActual", {
+                data:{{ tabla1|safe }},
+                layout:"fitDataStretch",
+                autoColumns:true
+            })
+
+        var tabla2 = new Tabulator("#tablaPrediccion", {
+                data:{{ tabla2|safe }},
+                layout:"fitDataStretch",
+                autoColumns:true
+            })
+    </script>
+{% endblock %}

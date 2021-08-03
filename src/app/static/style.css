@@ -19,4 +19,5 @@ body {
 .scroll-list {
     max-height: 200px;
     overflow-x: hidden;
+    list-style-type: none;
 }

@@ -7,6 +7,7 @@ from .forms import *
 from .utils import *
 import plotly.offline as plotly
 import numpy as np
+from sklearn.linear_model import LinearRegression
 import plotly.graph_objs as go
 import csv
 from io import StringIO
@@ -178,13 +179,30 @@ def buscadorBBDD(request):
 def planDocente(request):
     registrado = estaRegistrado(request)
     asignaturas = Asignatura.objects.values()
-    listaAsignaturas = []
+    
+    listaAsignaturas1 = []
+    
+    listaAsignaturas2 = []
+    
+    listaAsignaturas3Comun = []
+    listaAsignaturas3CSI = []
+    listaAsignaturas3IC = []
+    listaAsignaturas3IS = []
+    listaAsignaturas3SI = []
+    listaAsignaturas3TI = []
+    
+    listaAsignaturas4PETFG = []
+    listaAsignaturas4CSI = []
+    listaAsignaturas4IC = []
+    listaAsignaturas4IS = []
+    listaAsignaturas4SI = []
+    listaAsignaturas4TI = []
     
     añosUnicos = ObtenerAñosUnicos()
-    if añosUnicos.__len__()<2 :
+    if añosUnicos.__len__()<3 :
         return render(request, 'index.html', {'registrado':registrado, 'msg':"Error: No existen datos suficientes para generar el plan docente"})
     
-    cursos = [añosUnicos[1],añosUnicos[0]]
+    cursos = [añosUnicos[2],añosUnicos[1],añosUnicos[0]]
 
     for i in asignaturas:
         elemento = {}
@@ -195,16 +213,40 @@ def planDocente(request):
         elemento['Cuatrimestre'] = i.get('Semestre')
         elemento['Tipo'] = i.get('TipoAsignatura')
 
+        if elemento['Tipo'] == 1:
+            elemento['Tipo'] = "BAS"
+        
+        elif elemento['Tipo'] == 2:
+            elemento['Tipo'] = "COM"
+
+        elif elemento['Tipo'] == 3:
+            objmencion = ObtenerElemento("Mención",i.get('IDMencion_id'))
+            mencion = str(objmencion.Codigo)
+            if mencion == "01":
+                elemento['Tipo'] = "CSI"
+            elif mencion == "02":
+                elemento['Tipo'] = "IC"
+            elif mencion == "03":
+                elemento['Tipo'] = "IS"
+            elif mencion == "04":
+                elemento['Tipo'] = "SI"
+            elif mencion == "05":
+                elemento['Tipo'] = "TI"
+
+        elif elemento['Tipo'] == 4:
+            elemento['Tipo'] = "OPT"
+ 
         añoAsignatura1 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[0])
         añoAsignatura2 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[1])
+        añoAsignatura3 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[2])
 
-        elemento['AlumnosAnteriorespasado'] = -1 # Actualizar con datos del curso anterior
-        elemento['AlumnosActualespasado'] = añoAsignatura1.Matriculados
-        elemento['AlumnosAnterioresactual'] = añoAsignatura1.Matriculados
-        elemento['AlumnosActualesactual'] = añoAsignatura2.Matriculados
+        elemento['AlumnosAnteriorespasado'] = añoAsignatura3.Matriculados
+        elemento['AlumnosActualespasado'] = añoAsignatura2.Matriculados
+        elemento['AlumnosAnterioresactual'] = añoAsignatura2.Matriculados
+        elemento['AlumnosActualesactual'] = añoAsignatura1.Matriculados
 
-        grupos1 = ObtenerGruposAño(añoAsignatura1.ID)
-        grupos2 = ObtenerGruposAño(añoAsignatura2.ID)
+        grupos1 = ObtenerGruposAño(añoAsignatura2.ID)
+        grupos2 = ObtenerGruposAño(añoAsignatura1.ID)
 
         elemento['GruposGrandespasado'] = grupos1.__len__()
         elemento['GruposGrandesactual'] = grupos2.__len__()
@@ -217,20 +259,83 @@ def planDocente(request):
         for g2 in grupos2:
             elemento['GruposReducidosactual'] += g2.GruposReducidos
 
-        elemento['RatioTeoriapasado'] = añoAsignatura1.Matriculados/grupos1.__len__()
-        elemento['RatioPracticaspasado'] = añoAsignatura1.Matriculados/elemento['GruposReducidospasado']
-        elemento['RatioTeoriaactual'] = añoAsignatura2.Matriculados/grupos2.__len__()
-        elemento['RatioPracticasactual'] = añoAsignatura2.Matriculados/elemento['GruposReducidosactual']
+        elemento['RatioTeoriapasado'] = round(añoAsignatura2.Matriculados/grupos1.__len__(),2)
+        if elemento['GruposReducidospasado'] != 0:
+            elemento['RatioPracticaspasado'] = round(añoAsignatura2.Matriculados/elemento['GruposReducidospasado'],2)
+        else:
+            elemento['RatioPracticaspasado'] = 0
 
-        elemento['Diferencia'] = añoAsignatura2.Matriculados - añoAsignatura1.Matriculados
+        elemento['RatioTeoriaactual'] = round(añoAsignatura1.Matriculados/grupos2.__len__(),2)
+        if elemento['GruposReducidosactual'] != 0:
+            elemento['RatioPracticasactual'] = round(añoAsignatura1.Matriculados/elemento['GruposReducidosactual'],2)
+        else:
+            elemento['RatioPracticasactual'] = 0
+
+        elemento['Diferencia'] = añoAsignatura1.Matriculados - añoAsignatura2.Matriculados
         elemento['IncrementoTeoria'] = (grupos2.__len__()-grupos1.__len__())*i.get('CreditosGA')
         elemento['IncrementoPractica'] = (elemento['GruposReducidosactual']-elemento['GruposReducidospasado'])*i.get('CreditosGR')
         elemento['IncrementoTotal'] = elemento['IncrementoTeoria']+elemento['IncrementoPractica']
         elemento['Creditos'] = (grupos2.__len__()*i.get('CreditosGA'))+(elemento['GruposReducidosactual']*i.get('CreditosGR'))
 
-        listaAsignaturas.append(elemento)
+        if i.get('Curso') == 1:
+            listaAsignaturas1.append(elemento)
+        
+        elif i.get('Curso') == 2:
+            listaAsignaturas2.append(elemento)
+        
+        elif i.get('Curso') == 3:
+            objmencion = ObtenerElemento("Mención",i.get('IDMencion_id'))
+            mencion = str(objmencion.Codigo)
+            if mencion == "00":
+                listaAsignaturas3Comun.append(elemento)
+            elif mencion == "01":
+                listaAsignaturas3CSI.append(elemento)
+            elif mencion == "02":
+                listaAsignaturas3IC.append(elemento)
+            elif mencion == "03":
+                listaAsignaturas3IS.append(elemento)
+            elif mencion == "04":
+                listaAsignaturas3SI.append(elemento)
+            elif mencion == "05":
+                listaAsignaturas3TI.append(elemento)
 
-    return render(request, "plandocente.html", {'registrado': registrado, 'table':listaAsignaturas})
+        else:
+            objmencion = ObtenerElemento("Mención",i.get('IDMencion_id'))
+            mencion = str(objmencion.Codigo)
+            if mencion == "00":
+                listaAsignaturas4PETFG.append(elemento)
+            elif mencion == "01":
+                listaAsignaturas4CSI.append(elemento)
+            elif mencion == "02":
+                listaAsignaturas4IC.append(elemento)
+            elif mencion == "03":
+                listaAsignaturas4IS.append(elemento)
+            elif mencion == "04":
+                listaAsignaturas4SI.append(elemento)
+            elif mencion == "05":
+                listaAsignaturas4TI.append(elemento)
+
+    return render(
+        request,
+        "plandocente.html",
+        {
+            'registrado': registrado, 
+            'table1':listaAsignaturas1,
+            'table2':listaAsignaturas2,
+            'table3':listaAsignaturas3Comun,
+            'table4':listaAsignaturas3CSI,
+            'table5':listaAsignaturas3IC,
+            'table6':listaAsignaturas3IS,
+            'table7':listaAsignaturas3SI,
+            'table8':listaAsignaturas3TI,
+            'table9':listaAsignaturas4CSI,
+            'table10':listaAsignaturas4IC,
+            'table11':listaAsignaturas4IS,
+            'table12':listaAsignaturas4SI,
+            'table13':listaAsignaturas4TI,
+            'table14':listaAsignaturas4PETFG
+        }
+    )
 
 # EditarBBDD: Vista inicial de la función de edición.
 # 
@@ -551,7 +656,7 @@ def formularioEdicion(request):
                     gruposred=request.POST.get('GruposReducidos')
                 )
 
-        return render(request, 'index.html', {'registrado':registrado})
+        return render(request, 'index.html', {'registrado':registrado, 'msg':"Operación realizada correctamente"})
 
     if request.GET.get('seleccionobjeto') != "nuevo":
         obj = ObtenerElemento(request.GET.get('selecciontipo'), request.GET.get('seleccionobjeto'))
@@ -673,4 +778,130 @@ def eliminaRegistro(request):
     # Obtener elemento a eliminar a traves de id (desde url) y mandar peticion de eliminado a BBDD
     EliminaObjeto(request.GET.get('id'),request.GET.get('tipo'))
 
-    return render(request, 'index.html', {'registrado':registrado})
+    return render(request, 'index.html', {'registrado':registrado, 'msg':"Registro eliminado correctamente"})
+
+# Predicciones: Vista desde la cual se realizarán las predicciones que será capaz de 
+# producir la aplicación.
+def predicciones(request):
+    registrado = estaRegistrado(request)
+
+    if request.method == "GET":
+        asg = ObtenerRegistros("Asignatura")
+        return render(request, 'predicciones.html', {'registrado':registrado, 'asignaturas':asg})
+    
+    else:
+        # Obtención de asignatura seleccionada y lista de años
+        pkAsignatura = request.POST.get('asignatura')
+        asg = ObtenerElemento('Asignatura',pkAsignatura)
+        añosUnicos = ObtenerAñosUnicos()
+        añoActual = añosUnicos[añosUnicos.__len__()-1]
+        añoActual = str(añoActual)
+        añoActual = añoActual[0] + añoActual[1] + añoActual[2] + añoActual[3] + "/" + añoActual[4] + añoActual[5] + añoActual[6] + añoActual[7]
+
+        añoProximo = añosUnicos[añosUnicos.__len__()-1] + 10001
+        añoProximo = str(añoProximo)
+        añoProximo = añoProximo[0] + añoProximo[1] + añoProximo[2] + añoProximo[3] + "/" + añoProximo[4] + añoProximo[5] + añoProximo[6] + añoProximo[7]
+
+        añoProximo2 = añosUnicos[añosUnicos.__len__()-1] + 20002
+        añoProximo2 = str(añoProximo2)
+        añoProximo2 = añoProximo2[0] + añoProximo2[1] + añoProximo2[2] + añoProximo2[3] + "/" + añoProximo2[4] + añoProximo2[5] + añoProximo2[6] + añoProximo2[7]
+
+        # Obtención de datos y regresión lineal
+        añosAsignatura = ObtenerAñosAsignatura(pkAsignatura)
+        matriculas = []
+        for i in añosAsignatura:
+            matriculas.append(i.Matriculados)
+
+        x = np.array(range(0,añosUnicos.__len__())).reshape((-1,1))
+        y = np.array(matriculas)
+        modelo = LinearRegression().fit(x,y)
+
+        precision = round(modelo.score(x,y),2)
+
+        # Creación de datos correspondientes a la generación de la gráfica
+        puntosGrafica = matriculas
+        for i in range(añosUnicos.__len__(),añosUnicos.__len__()+2):
+            elemento = modelo.predict([[i]])
+            puntosGrafica.append(elemento[0])
+
+        infoGrafica = []
+        elementoInfoGrafica = {}
+        elementoInfoGrafica['label'] = asg.Nombre
+
+        elementoInfoGrafica['data'] = puntosGrafica
+
+        valorR = random.randint(0,255)
+        valorG = random.randint(0,255)
+        valorB = random.randint(0,255)
+        elementoInfoGrafica['backgroundColor'] = 'rgba('+str(valorR)+','+str(valorG)+','+str(valorB)+', 0.2)'
+        
+        infoGrafica.append(elementoInfoGrafica)
+
+        listaaños = [] 
+        for j in añosUnicos:
+            j = str(j)
+            año1 = j[0] + j[1] + j[2] + j[3]
+            año2 = j[4] + j[5] + j[6] + j[7]
+            
+            añoelemento = año1 + "/" + año2
+            listaaños.append(añoelemento)
+        
+        listaaños.append(añoProximo)
+        listaaños.append(añoProximo2)
+
+        listaaños.sort()
+
+        # Generación de tabla actual
+        datosTablaActual = [{
+            'Nombre':asg.Nombre,
+            'Matriculados':añosAsignatura[añosAsignatura.__len__()-1].Matriculados,
+            'GA':0,
+            'GR':0,
+            'Rat T':0,
+            'Rat P':0
+        }]
+
+        añoAsignaturaActual = añosAsignatura[añosAsignatura.__len__()-1]
+        grupos = ObtenerGruposAño(añoAsignaturaActual.ID)
+        datosTablaActual[0]['GA'] = grupos.__len__()
+
+        gruposPequeños = 0
+        for g in grupos:
+            gruposPequeños += g.GruposReducidos
+
+        datosTablaActual[0]['GR'] = gruposPequeños
+
+        datosTablaActual[0]['Rat T'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/grupos.__len__(), 2)
+        datosTablaActual[0]['Rat P'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/gruposPequeños, 2)
+
+        # Generación de tabla predicción
+        matriculadosFuturos = modelo.predict([[añosAsignatura.__len__()]])
+        matriculadosFuturos = round(matriculadosFuturos[0])
+
+        datosTablaPrediccion = [{
+            'Nombre':asg.Nombre,
+            'Matriculados':matriculadosFuturos,
+            'GA':datosTablaActual[0]['GA'],
+            'GR':datosTablaActual[0]['GR'],
+            'Rat T':0,
+            'Rat P':0
+        }]
+
+        datosTablaPrediccion[0]['Rat T'] = round(matriculadosFuturos/grupos.__len__(), 2)
+        datosTablaPrediccion[0]['Rat P'] = round(matriculadosFuturos/gruposPequeños, 2)
+
+        return render(
+            request,
+            'resultadoprediccion.html',
+            {
+                'registrado':registrado,
+                'nombreAsignatura':asg.Nombre,
+                'cursoProximo':añoProximo,
+                'cursoActual':añoActual,
+                'precision':precision,
+                'data':infoGrafica,
+                'listaAños':listaaños,
+                'tabla1':datosTablaActual,
+                'tabla2':datosTablaPrediccion
+            }
+        )

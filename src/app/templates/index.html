@@ -13,7 +13,7 @@
 
     <body>
         <div class="row mt-4 container-fluid">
-            <h1 class="col-11">Trabajo Fin de Grado</h1>
+            <h1 class="col-11">Aplicación de Gestión de Recursos Universitarios</h1>
             {% if registrado %}
             <p class="col">Bienvenido {{ request.user.username }}</p>
             {% endif %}
@@ -36,6 +36,9 @@
                         {% if registrado == True %}
                         <li class="nav-item">
                             <a class="nav-link" href="/editorBBDD">Editor Base de Datos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/predicciones">Predicciones</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/copiaseguridad">Crear copia de seguridad</a>

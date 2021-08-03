@@ -5,82 +5,396 @@
 <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
 
-<div class="row mt-3 ms-3 me-3" id="tablilla">
-    
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 1º</h3>
+    <div class="mt-3" id="tablilla1">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 2º</h3>
+    <div class="mt-3" id="tablilla2">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 3º Comunes</h3>
+    <div class="mt-3" id="tablilla3">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 3º Computación y Sistemas Inteligentes</h3>
+    <div class="mt-3" id="tablilla4">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 3º Ingeniería de Computadores</h3>
+    <div class="mt-3" id="tablilla5">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 3º Ingeniería del Software</h3>
+    <div class="mt-3" id="tablilla6">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 3º Sistemas de Información</h3>
+    <div class="mt-3" id="tablilla7">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 3º Tecnologías de la Información</h3>
+    <div class="mt-3" id="tablilla8">
+        
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 4º Computación y Sistemas Inteligentes</h3>
+    <div class="mt-3" id="tablilla9">
+
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 4º Ingeniería de Computadores</h3>
+    <div class="mt-3" id="tablilla10">
+
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 4º Ingeniería del Software</h3>
+    <div class="mt-3" id="tablilla11">
+
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 4º Sistemas de Información</h3>
+    <div class="mt-3" id="tablilla12">
+
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Asignaturas 4º Tecnologías de la Información</h3>
+    <div class="mt-3" id="tablilla13">
+
+    </div>
+</div>
+
+<div class="mt-5 ms-3">
+    <h3>Prácticas de Empresa y TFG</h3>
+    <div class="mt-3" id="tablilla14">
+
+    </div>
 </div>
 
 <script>
-    var tabla = new Tabulator("#tablilla", {
-        data:{{ table|safe }},
-        columns:[
-            {
-                title:"Información General",
-                columns:[
-                    {title:"Nombre",field:"Nombre"},
-                    {title:"Acrónimo",field:"Acronimo"},
-                    {title:"CR.GA",field:"CRGA"},
-                    {title:"CR.GR",field:"CRGR"},
-                    {title:"Cuatr.",field:"Cuatrimestre"},
-                    {title:"Tipo",field:"Tipo"}
-                ]
-            },
-            {
-                title:"Información curso pasado",
-                columns:[
-                    {title:"AL",field:"AlumnosAnteriorespasado"},
-                    {title:"AL",field:"AlumnosActualespasado"},
-                    {title:"GA",field:"GruposGrandespasado"},
-                    {title:"GR",field:"GruposReducidospasado"},
-                    {title:"Rat T",field:"RatioTeoriapasado"},
-                    {title:"Rat P",field:"RatioPracticaspasado"}
-                ]
-            },
-            {
-                title:"Información curso actual",
-                columns:[
-                    {title:"AL",field:"AlumnosAnterioresactual"},
-                    {title:"AL",field:"AlumnosActualesactual"},
-                    {
-                        title:"GA",
-                        field:"GruposGrandesactual",
-                        editor:"input",
-                        cellEdited:function(cell){
-                            var fila = cell.getRow()
-                            var ratio = fila.getCell("RatioTeoriaactual")
-                            var alumnos = fila.getCell("AlumnosActualesactual")
+    function colorGrupos(cell, formatterParams,tipoGrupo){
+        var valorRatio = cell.getValue()
+        if(valorRatio>80 && tipoGrupo=="T"){
+            return "<p style='color:red;'>" + valorRatio + "</p>"
+        }
+        else if(valorRatio>28 && tipoGrupo=="P"){
+            return "<p style='color:red;'>" + valorRatio + "</p>"
+        }
+        else{
+            return valorRatio
+        }
+    }
 
-                            var nuevoRatio = alumnos.getValue()/cell.getValue()
-                            ratio.setValue(nuevoRatio, true)
-                        }
-                    },
-                    {
-                        title:"GR",
-                        field:"GruposReducidosactual",
-                        editor:"input",
-                        cellEdited:function(cell){
-                            var fila = cell.getRow()
-                            var ratio = fila.getCell("RatioPracticasactual")
-                            var alumnos = fila.getCell("AlumnosActualesactual")
+    function modificaIncrementoTotal(celda, modificacion){
+        var nuevoIncrementoTotal = celda.getValue() + modificacion
+        celda.setValue(nuevoIncrementoTotal, true)
+        return nuevoIncrementoTotal
+    }
 
-                            var nuevoRatio = alumnos.getValue()/cell.getValue()
-                            ratio.setValue(nuevoRatio, true)
-                        }
-                    },
-                    {title:"Rat T",field:"RatioTeoriaactual"},
-                    {title:"Rat P",field:"RatioPracticasactual"}
-                ]
-            },
-            {
-                title:"Incrementos curso pasado/actual",
-                columns:[
-                    {title:"Dif",field:"Diferencia"},
-                    {title:"IT",field:"IncrementoTeoria"},
-                    {title:"IP",field:"IncrementoPractica"},
-                    {title:"INC",field:"IncrementoTotal"},
-                    {title:"CD",field:"Creditos"}
-                ]
-            }
-        ]
-    })
+    function modificaCreditosTotales(celda,modificacion){
+        var nuevosCreditosTotales = celda.getValue() + modificacion
+        celda.setValue(nuevosCreditosTotales, true)
+    }
+
+    function colorCeldas(cell,gruposAnteriores){
+        var gruposActuales = cell.getValue()
+        if(gruposActuales>gruposAnteriores){
+            cell.getElement().style.backgroundColor = "#6fbd85"
+        }
+        else if(gruposActuales<gruposAnteriores){
+            cell.getElement().style.backgroundColor = "#bd6f6f"
+        }
+    }
+
+    var infoGeneral = [
+        {
+            title:"Información General",
+            columns:[
+                {title:"Nombre",field:"Nombre"},
+                {title:"Acrónimo",field:"Acronimo"},
+                {title:"CR.GA",field:"CRGA"},
+                {title:"CR.GR",field:"CRGR"},
+                {title:"Cuatr.",field:"Cuatrimestre"},
+                {title:"Tipo",field:"Tipo"}
+            ]
+        },
+        {
+            title:"Información curso pasado",
+            columns:[
+                {title:"AL",field:"AlumnosAnteriorespasado"},
+                {title:"AL",field:"AlumnosActualespasado"},
+                {title:"GA",field:"GruposGrandespasado"},
+                {title:"GR",field:"GruposReducidospasado"},
+                {
+                    title:"Rat T",
+                    field:"RatioTeoriapasado",
+                    formatter:function(cell,formatterParams){
+                        return colorGrupos(cell,formatterParams,"T")
+                    }
+                },
+                {
+                    title:"Rat P",
+                    field:"RatioPracticaspasado",
+                    formatter:function(cell,formatterParams){
+                        return colorGrupos(cell,formatterParams,"P")
+                    }
+                }
+            ]
+        },
+        {
+            title:"Información curso actual",
+            columns:[
+                {title:"AL",field:"AlumnosAnterioresactual"},
+                {title:"AL",field:"AlumnosActualesactual"},
+                {
+                    title:"GA",
+                    field:"GruposGrandesactual",
+                    editor:"input",
+                    cellEdited:function(cell){
+                        var fila = cell.getRow()
+                        var ratio = fila.getCell("RatioTeoriaactual")
+                        var alumnos = fila.getCell("AlumnosActualesactual")
+
+                        var nuevoRatio = alumnos.getValue()/cell.getValue()
+                        ratio.setValue(nuevoRatio, true)
+
+                        var incrementoTeoria = fila.getCell("IncrementoTeoria")
+                        var gruposGrandesAnteriores = fila.getCell("GruposGrandespasado")
+                        var creditosGrupoGrande = fila.getCell("CRGA")
+                        
+                        var nuevoIncrementoTeoria = (cell.getValue() - gruposGrandesAnteriores.getValue()) * creditosGrupoGrande.getValue()
+                        var diferenciaIncrementos = nuevoIncrementoTeoria - incrementoTeoria.getValue()
+                        incrementoTeoria.setValue(nuevoIncrementoTeoria, true)
+
+                        var incrementoTotal = fila.getCell("IncrementoTotal")
+                        var valorIncrementoTotal = incrementoTotal.getValue()
+                        var nuevoIncrementoTotal = modificaIncrementoTotal(incrementoTotal,diferenciaIncrementos)
+
+                        var creditosTotales = fila.getCell("Creditos")
+                        var diferenciaIncrementosTotales = nuevoIncrementoTotal - valorIncrementoTotal
+                        modificaCreditosTotales(creditosTotales,diferenciaIncrementosTotales)
+
+                        var gruposAnteriores = cell.getOldValue()
+                        colorCeldas(cell,gruposAnteriores)
+                    }
+                },
+                {
+                    title:"GR",
+                    field:"GruposReducidosactual",
+                    editor:"input",
+                    cellEdited:function(cell){
+                        var fila = cell.getRow()
+                        var ratio = fila.getCell("RatioPracticasactual")
+                        var alumnos = fila.getCell("AlumnosActualesactual")
+
+                        var nuevoRatio = alumnos.getValue()/cell.getValue()
+                        ratio.setValue(nuevoRatio, true)
+
+                        var incrementoPracticas = fila.getCell("IncrementoPractica")
+                        var gruposPequeñosAnteriores = fila.getCell("GruposReducidospasado")
+                        var creditosGrupoPequeño = fila.getCell("CRGR")
+
+                        var nuevoIncrementoPracticas = (cell.getValue() - gruposPequeñosAnteriores.getValue()) * creditosGrupoPequeño.getValue()
+                        var diferenciaIncrementos = nuevoIncrementoPracticas - incrementoPracticas.getValue()
+                        incrementoPracticas.setValue(nuevoIncrementoPracticas, true)
+
+                        var incrementoTotal = fila.getCell("IncrementoTotal")
+                        var valorIncrementoTotal = incrementoTotal.getValue()
+                        var nuevoIncrementoTotal = modificaIncrementoTotal(incrementoTotal,diferenciaIncrementos)
+
+                        var creditosTotales = fila.getCell("Creditos")
+                        var diferenciaIncrementosTotales = nuevoIncrementoTotal - valorIncrementoTotal
+                        modificaCreditosTotales(creditosTotales,diferenciaIncrementosTotales)
+
+                        var gruposAnteriores = cell.getOldValue()
+                        colorCeldas(cell,gruposAnteriores)
+                    }
+                },
+                {
+                    title:"Rat T",
+                    field:"RatioTeoriaactual",
+                    formatter:function(cell,formatterParams){
+                        return colorGrupos(cell,formatterParams,"T")
+                    }
+                },
+                {
+                    title:"Rat P",
+                    field:"RatioPracticasactual",
+                    formatter:function(cell,formatterParams){
+                        return colorGrupos(cell,formatterParams,"P")
+                    }
+                }
+            ]
+        },
+        {
+            title:"Incrementos curso pasado/actual",
+            columns:[
+                {title:"Dif",field:"Diferencia"},
+                {title:"IT",field:"IncrementoTeoria"},
+                {title:"IP",field:"IncrementoPractica"},
+                {title:"INC",field:"IncrementoTotal"},
+                {title:"CD",field:"Creditos"}
+            ]
+        }
+    ]
+
+    var tabla1 = new Tabulator(
+        "#tablilla1",
+        {
+            data:{{ table1|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla2 = new Tabulator(
+        "#tablilla2",
+        {
+            data:{{ table2|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla3 = new Tabulator(
+        "#tablilla3",
+        {
+            data:{{ table3|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla4 = new Tabulator(
+        "#tablilla4",
+        {
+            data:{{ table4|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla5 = new Tabulator(
+        "#tablilla5",
+        {
+            data:{{ table5|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla6 = new Tabulator(
+        "#tablilla6",
+        {
+            data:{{ table6|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla7 = new Tabulator(
+        "#tablilla7",
+        {
+            data:{{ table7|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla8 = new Tabulator(
+        "#tablilla8",
+        {
+            data:{{ table8|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla9 = new Tabulator(
+        "#tablilla9",
+        {
+            data:{{ table9|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla10 = new Tabulator(
+        "#tablilla10",
+        {
+            data:{{ table10|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla11 = new Tabulator(
+        "#tablilla11",
+        {
+            data:{{ table11|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla12 = new Tabulator(
+        "#tablilla12",
+        {
+            data:{{ table12|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla13 = new Tabulator(
+        "#tablilla13",
+        {
+            data:{{ table13|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
+
+    var tabla14 = new Tabulator(
+        "#tablilla14",
+        {
+            data:{{ table14|safe }},
+            layout:"fitDataStretch",
+            columns:infoGeneral
+        }
+    )
 </script>
+
 {% endblock %}
