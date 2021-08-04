@@ -42,17 +42,75 @@
                 responsive: true
             }
         });
+        
+        function colorGrupos(cell, formatterParams,tipoGrupo){
+            var valorRatio = cell.getValue()
+            if(valorRatio>80 && tipoGrupo=="T"){
+                return "<p style='color:red;'>" + valorRatio + "</p>"
+            }
+            else if(valorRatio>28 && tipoGrupo=="P"){
+                return "<p style='color:red;'>" + valorRatio + "</p>"
+            }
+            else{
+                return valorRatio
+            }
+        }
+
+        var infoColumnas = [
+            {title:"Nombre",field:"Nombre"},
+            {title:"Matriculados",field:"Matriculados"},
+            {
+                title:"GA",
+                field:"GA",
+                editor:"input",
+                cellEdited:function(cell){
+                    var fila = cell.getRow()
+                    var ratio = fila.getCell("Rat T")
+                    var matriculados = fila.getCell("Matriculados")
+
+                    var nuevoRatio = matriculados.getValue()/cell.getValue()
+                    ratio.setValue(nuevoRatio)
+                }
+            },
+            {
+                title:"GR",
+                field:"GR",
+                editor:"input",
+                cellEdited:function(cell){
+                    var fila = cell.getRow()
+                    var ratio = fila.getCell("Rat P")
+                    var matriculados = fila.getCell("Matriculados")
+
+                    var nuevoRatio = matriculados.getValue()/cell.getValue()
+                    ratio.setValue(nuevoRatio)
+                }
+            },
+            {
+                title:"Rat T",
+                field:"Rat T",
+                formatter:function(cell,formatterParams){
+                    return colorGrupos(cell,formatterParams,"T")
+                }
+            },
+            {
+                title:"Rat P",
+                field:"Rat P",
+                formatter:function(cell,formatterParams){
+                    return colorGrupos(cell,formatterParams,"P")
+                }
+            }
+        ]
 
         var tabla = new Tabulator("#tablaActual", {
                 data:{{ tabla1|safe }},
                 layout:"fitDataStretch",
-                autoColumns:true
+                columns:infoColumnas
             })
 
         var tabla2 = new Tabulator("#tablaPrediccion", {
                 data:{{ tabla2|safe }},
                 layout:"fitDataStretch",
-                autoColumns:true
+                columns:infoColumnas
             })
     </script>
 {% endblock %}
