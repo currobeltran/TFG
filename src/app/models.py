@@ -411,23 +411,34 @@ def ModificaAsignatura(id,pkdif,nombre,acronimo,creditosgr,creditosga,idasigante
     plan = codigo[3]+codigo[4]
     idcodigo = codigo[5]+codigo[6]
 
-    pk = titulo + plan + mencion.Codigo + str(curso) + str(semestre) + str(tipoasig) + idcodigo + str(pkdif)
+    pkNueva = titulo + plan + mencion.Codigo + str(curso) + str(semestre) + str(tipoasig) + idcodigo + str(pkdif)
+    if(id != pkNueva):
+        CrearAsignatura(nombre,pkdif,acronimo,creditosgr,creditosga,idasiganterior,curso,codigo,semestre,tipoasig,idmencion)
+        asigAntigua = Asignatura.objects.get(pk=id)
+        asigNueva = Asignatura.objects.get(pk=pkNueva)
 
-    asig = Asignatura.objects.get(pk=id)
-    asig.Nombre = nombre
-    asig.Acronimo = acronimo
-    asig.CreditosGR = creditosgr
-    asig.CreditosGA = creditosga
-    asig.IdAsignaturaAnterior = idasiganterior
-    asig.Curso = curso
-    asig.Codigo = codigo
-    asig.Semestre = semestre
-    asig.TipoAsignatura = tipoasig
-    asig.IDMencion = mencion
-    asig.PK = pk
+        añosAsignatura = ObtenerAñosAsignatura(pk=id)
+        for i in añosAsignatura:
+            i.PK = asigNueva
+            i.save()
+        
+        asigAntigua.delete()
 
-    asig.save()
+    else:
+        asig = Asignatura.objects.get(pk=id)
+        asig.Nombre = nombre
+        asig.Acronimo = acronimo
+        asig.CreditosGR = creditosgr
+        asig.CreditosGA = creditosga
+        asig.IdAsignaturaAnterior = idasiganterior
+        asig.Curso = curso
+        asig.Codigo = codigo
+        asig.Semestre = semestre
+        asig.TipoAsignatura = tipoasig
+        asig.IDMencion = mencion
 
+        asig.save()
+    
 def ModificaMencion(id,codigo,nombre):
     mencion = Mencion.objects.get(ID=id)
     mencion.Codigo = codigo
@@ -469,6 +480,15 @@ def ModificaAñoAsignatura(id,pk,año,matriculados):
 def ModificaGrupo(id,idañoasig,letra,nuevos,repetidores,retenidos,plazas,libreconf,otrostitulos,turno,gruposred,asimilado=0,compartido=0):
     grupo = Grupo.objects.get(ID=id)
     añoasig = ObtenerElemento("Año asignatura",idañoasig)
+
+    diferenciaNuevos = int(nuevos) - grupo.Nuevos
+    diferenciaRepetidores = int(repetidores) - grupo.Repetidores
+    diferenciaRetenidos = int(retenidos) - grupo.Retenidos
+    diferenciaLibre = int(libreconf) - grupo.LibreConfiguracion
+    diferenciaOtrosTitulos = int(otrostitulos) - grupo.OtrosTitulos
+
+    añoasig.Matriculados += (diferenciaNuevos + diferenciaRepetidores + diferenciaRetenidos + diferenciaLibre + diferenciaOtrosTitulos)
+    añoasig.save()
 
     grupo.IDAñoAsignatura = añoasig
     grupo.Letra = letra
