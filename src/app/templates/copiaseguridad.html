@@ -4,18 +4,21 @@
 
 <h3 class="mt-4 ms-4">Realización de copia de seguridad</h3>
 
-<form class="col-6 mt-3 ms-4">
-    <div class="form-group">
-        <label for="seleccioncopia">Seleccione el formato para realizar la copia de seguridad</label>
-        <select class="form-control mt-2" id="seleccioncopia">
-            <option>Una opcion</option>
-            <option>Otra</option>
-            <option>Y otra mas</option>
-            <option>Todas de prueba</option>
-        </select>
+<p class="ms-4 mt-3">Si desea realizar una copia de los datos y la estructura de la base de datos, pulse aquí</p>
+<form class="col-6 mt-3 ms-5" action="/copiaseguridad" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-dark" id="realizaCopia" name="accion" value="1">Realizar copia de seguridad</button>
+</form>
+
+<p class="ms-4 mt-5">Si desea restablecer una base de datos antigua, complete el siguiente formulario</p>
+
+<form class="col-6 mt-3 ms-5" action="/copiaseguridad" method="POST">
+    {% csrf_token %}
+    <div class="custom-file col-6">
+        <input type="file" class="form-control" name="archivo">
     </div>
-    
-    <button type="submit" class="btn btn-dark mt-4">Realizar copia de seguridad</button>
+
+    <button type="submit" class="btn btn-dark mt-3" id="restableceCopia" name="accion" value="2">Restablecer copia de seguridad</button>
 </form>
 
 {% endblock %}

@@ -16,6 +16,9 @@ from django_tables2 import SingleTableView
 import random
 import datetime
 import time
+from django.core.management import call_command
+import os
+from django.apps import apps
 
 # Inicio: Vista inicial de la aplicación
 # TODO: Añadir un parámetro al renderizado de index.html para que se pueda
@@ -470,16 +473,35 @@ def apibuscaBBDD(request):
 
     return JsonResponse(data)
 
-# CopiaSeguridad: Vista para realizar una copia de seguridad de la información almacenada
-# en la Base de Datos.
-# TODO: Implementar funcionalidad, solo está diseñada la interfaz.
+# CopiaSeguridad: Vista para realizar y restaurar 
+# una copia de seguridad de la información almacenada en la Base de Datos.
 def copiaSeguridad(request):
     registrado = estaRegistrado(request)
     if not registrado:
         texto = "No tiene permiso para acceder a esta página"
         return render(request, 'error.html', {'registrado':registrado, 'texto':texto})
 
-    return render(request, 'copiaseguridad.html', {'registrado':registrado})
+    if request.method == "GET":
+        return render(request, 'copiaseguridad.html', {'registrado':registrado})
+    else:
+        print(os.path.dirname(apps.get_app_config("app").path))
+
+        if request.POST.get('accion') == '1':
+            backup = open(os.path.dirname(apps.get_app_config("app").path)+"/var/backups/Copia de seguridad.json",'w')
+            call_command('dumpdata',stdout=backup)
+            backup.close()
+            
+            return render(request, 'index.html', {'registrado':registrado,'msg':"Copia de seguridad realizada"})
+
+        elif request.POST.get('accion') == '2':
+            if request.POST.get('archivo') == '':
+                return render(request, 'copiaseguridad.html', {'registrado':registrado})
+
+            call_command('loaddata',os.path.dirname(apps.get_app_config("app").path)+"/var/backups/"+request.POST.get('archivo'))
+
+            return render(request, 'index.html', {'registrado':registrado,'msg':"Copia de seguridad reestablecida"})
+        
+        return render(request, 'index.html', {'registrado':registrado,'msg':"Lo sentimos, ha ocurrido un error"})
 
 # EditaUsuario: Vista para que el usuario que esté registrado en ese momento en la aplicación
 # pueda editar su infomación personal.
