@@ -483,11 +483,11 @@ def copiaSeguridad(request):
 
     if request.method == "GET":
         return render(request, 'copiaseguridad.html', {'registrado':registrado})
+
     else:
-        print(os.path.dirname(apps.get_app_config("app").path))
 
         if request.POST.get('accion') == '1':
-            backup = open(os.path.dirname(apps.get_app_config("app").path)+"/var/backups/Copia de seguridad.json",'w')
+            backup = open(os.path.dirname(apps.get_app_config("app").path)+"/var/backups/"+request.POST.get('nombreDocumento')+".json",'w')
             call_command('dumpdata',stdout=backup)
             backup.close()
             

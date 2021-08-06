@@ -2,15 +2,22 @@
 
 {% block central %}
 
-<h3 class="mt-4 ms-4">Realización de copia de seguridad</h3>
+<h3 class="mt-4 ms-4">Gestión de copias de seguridad</h3>
 
-<p class="ms-4 mt-3">Si desea realizar una copia de los datos y la estructura de la base de datos, pulse aquí</p>
+<h5 class="ms-4 mt-3">Realizar copia de seguridad</h5>
 <form class="col-6 mt-3 ms-5" action="/copiaseguridad" method="POST">
     {% csrf_token %}
-    <button type="submit" class="btn btn-dark" id="realizaCopia" name="accion" value="1">Realizar copia de seguridad</button>
+    <div class="col-6">
+        <label for="nombreDocumento">
+            Introduzca el nombre del documento sin la extensión. Se almacenará en /var/backups,
+            dentro del directorio de la aplicación.
+        </label>
+        <input type="text" class="form-control" name="nombreDocumento" id="nombreDocumento">
+    </div>
+    <button type="submit" class="btn btn-dark mt-3" id="realizaCopia" name="accion" value="1">Realizar copia de seguridad</button>
 </form>
 
-<p class="ms-4 mt-5">Si desea restablecer una base de datos antigua, complete el siguiente formulario</p>
+<h5 class="ms-4 mt-5">Restablecer copia de seguridad</h5>
 
 <form class="col-6 mt-3 ms-5" action="/copiaseguridad" method="POST">
     {% csrf_token %}
