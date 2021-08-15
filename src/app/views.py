@@ -201,34 +201,27 @@ def buscadorBBDD(request):
 # a un plan de ordenación docente
 def planDocente(request):
     registrado = estaRegistrado(request)
+
+    # Obtenemos todas las asignaturas
     asignaturas = Asignatura.objects.values()
     
-    listaAsignaturas1 = []
+    # Creamos un diccionario que rellenaremos con las distintas tablas del plan docente
+    tablas = {}
     
-    listaAsignaturas2 = []
-    
-    listaAsignaturas3Comun = []
-    listaAsignaturas3CSI = []
-    listaAsignaturas3IC = []
-    listaAsignaturas3IS = []
-    listaAsignaturas3SI = []
-    listaAsignaturas3TI = []
-    
-    listaAsignaturas4PETFG = []
-    listaAsignaturas4CSI = []
-    listaAsignaturas4IC = []
-    listaAsignaturas4IS = []
-    listaAsignaturas4SI = []
-    listaAsignaturas4TI = []
-    
+    # Si no hay más de 3 años académicos dentro de la aplicación, no se genera el plan docente
     añosUnicos = ObtenerAñosUnicos()
     if añosUnicos.__len__()<3 :
         return render(request, 'index.html', {'registrado':registrado, 'msg':"Error: No existen datos suficientes para generar el plan docente"})
     
+    # Vector de los 3 últimos años académicos almacenados
     cursos = [añosUnicos[2],añosUnicos[1],añosUnicos[0]]
 
+    # Para cada asignatura:
     for i in asignaturas:
+        # El diccionario elemento corresponderá con una fila de una tabla del plan docente
         elemento = {}
+
+        # Se rellenan las distintas columnas con la información general de la asignatura
         elemento['Nombre'] = i.get('Nombre')
         elemento['Acronimo'] = i.get('Acronimo')
         elemento['CRGA'] = i.get('CreditosGA')
@@ -236,52 +229,42 @@ def planDocente(request):
         elemento['Cuatrimestre'] = i.get('Semestre')
         elemento['Tipo'] = i.get('TipoAsignatura')
 
-        if elemento['Tipo'] == 1:
-            elemento['Tipo'] = "BAS"
-        
-        elif elemento['Tipo'] == 2:
-            elemento['Tipo'] = "COM"
-
-        elif elemento['Tipo'] == 3:
-            objmencion = ObtenerElemento("Mención",i.get('IDMencion_id'))
-            mencion = str(objmencion.Codigo)
-            if mencion == "01":
-                elemento['Tipo'] = "CSI"
-            elif mencion == "02":
-                elemento['Tipo'] = "IC"
-            elif mencion == "03":
-                elemento['Tipo'] = "IS"
-            elif mencion == "04":
-                elemento['Tipo'] = "SI"
-            elif mencion == "05":
-                elemento['Tipo'] = "TI"
-
-        elif elemento['Tipo'] == 4:
-            elemento['Tipo'] = "OPT"
+        # Se modifica el campo 'Tipo' por un string, correspondiente al nombre del tipo 
+        # de la asignatura dentro de la titulación a la que pertenece
+        elemento = defineTipoAsignaturaPlanDocenteInformatica(elemento,i)
  
-        añoAsignatura1 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[0])
+        # Obtenemos los objetos AñoAsignatura correspondientes a los 3 últimos cursos académicos
+        añoAsignatura1 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[0]) # Año más reciente
         añoAsignatura2 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[1])
-        añoAsignatura3 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[2])
+        añoAsignatura3 = ObtenerAñoAsignaturaUnico(i.get('PK'), cursos[2]) # Año más antiguo
 
+        # Se rellenan columnas con información obtenida de los objetos AñoAsignatura anteriores
         elemento['AlumnosAnteriorespasado'] = añoAsignatura3.Matriculados
         elemento['AlumnosActualespasado'] = añoAsignatura2.Matriculados
         elemento['AlumnosAnterioresactual'] = añoAsignatura2.Matriculados
         elemento['AlumnosActualesactual'] = añoAsignatura1.Matriculados
 
+        # Obtenemos los grupos de los 2 años más recientes
         grupos1 = ObtenerGruposAño(añoAsignatura2.ID)
         grupos2 = ObtenerGruposAño(añoAsignatura1.ID)
 
+        # Se rellenan columnas con información obtenida de los objetos Grupo anteriores
         elemento['GruposGrandespasado'] = grupos1.__len__()
         elemento['GruposGrandesactual'] = grupos2.__len__()
         elemento['GruposReducidospasado'] = 0
         elemento['GruposReducidosactual'] = 0
 
-        for g1 in grupos1:
-            elemento['GruposReducidospasado'] += g1.GruposReducidos
+        # Cálculo del número de grupos reducidos en los 2 años más recientes 
+        # 
+        # Se obtiene este número a partir de acumular la cantidad de grupos reducidos de
+        # todos los grupos de la asignatura en dicho año 
+        elemento['GruposReducidospasado'] = numeroGruposReducidosEnAño(grupos1)
+        elemento['GruposReducidosactual'] = numeroGruposReducidosEnAño(grupos2)
 
-        for g2 in grupos2:
-            elemento['GruposReducidosactual'] += g2.GruposReducidos
-
+        # Se obtienen las ratios de alumnos por grupo en teoría y prácticas.
+        # 
+        # Si no existen grupos reducidos para esa asignatura, antes que realizar una división
+        # entre 0 se comprueba para evitar el error
         elemento['RatioTeoriapasado'] = round(añoAsignatura2.Matriculados/grupos1.__len__(),2)
         if elemento['GruposReducidospasado'] != 0:
             elemento['RatioPracticaspasado'] = round(añoAsignatura2.Matriculados/elemento['GruposReducidospasado'],2)
@@ -294,69 +277,31 @@ def planDocente(request):
         else:
             elemento['RatioPracticasactual'] = 0
 
+        # Diferencia de alumnos matriculados
         elemento['Diferencia'] = añoAsignatura1.Matriculados - añoAsignatura2.Matriculados
+
+        # Incremento de los créditos utilizados en teoría entre el penúltimo año y el último registrados
         elemento['IncrementoTeoria'] = (grupos2.__len__()-grupos1.__len__())*i.get('CreditosGA')
+
+        # Incremento de los créditos utilizados en prácticas entre el penúltimo año y el último registrados
         elemento['IncrementoPractica'] = (elemento['GruposReducidosactual']-elemento['GruposReducidospasado'])*i.get('CreditosGR')
+
+        # Suma de los incrementos totales de créditos en teoría y prácticas
         elemento['IncrementoTotal'] = elemento['IncrementoTeoria']+elemento['IncrementoPractica']
+
+        # Cantidad total de créditos utilzados para el último curso registrado
         elemento['Creditos'] = (grupos2.__len__()*i.get('CreditosGA'))+(elemento['GruposReducidosactual']*i.get('CreditosGR'))
 
-        if i.get('Curso') == 1:
-            listaAsignaturas1.append(elemento)
-        
-        elif i.get('Curso') == 2:
-            listaAsignaturas2.append(elemento)
-        
-        elif i.get('Curso') == 3:
-            objmencion = ObtenerElemento("Mención",i.get('IDMencion_id'))
-            mencion = str(objmencion.Codigo)
-            if mencion == "00":
-                listaAsignaturas3Comun.append(elemento)
-            elif mencion == "01":
-                listaAsignaturas3CSI.append(elemento)
-            elif mencion == "02":
-                listaAsignaturas3IC.append(elemento)
-            elif mencion == "03":
-                listaAsignaturas3IS.append(elemento)
-            elif mencion == "04":
-                listaAsignaturas3SI.append(elemento)
-            elif mencion == "05":
-                listaAsignaturas3TI.append(elemento)
-
-        else:
-            objmencion = ObtenerElemento("Mención",i.get('IDMencion_id'))
-            mencion = str(objmencion.Codigo)
-            if mencion == "00":
-                listaAsignaturas4PETFG.append(elemento)
-            elif mencion == "01":
-                listaAsignaturas4CSI.append(elemento)
-            elif mencion == "02":
-                listaAsignaturas4IC.append(elemento)
-            elif mencion == "03":
-                listaAsignaturas4IS.append(elemento)
-            elif mencion == "04":
-                listaAsignaturas4SI.append(elemento)
-            elif mencion == "05":
-                listaAsignaturas4TI.append(elemento)
+        # Se añade el elemento a la lista correspondiente a su curso
+        tablas = aniadeAsignaturaInformaticaAPlanDocente(tablas,i,elemento)
 
     return render(
         request,
         "plandocente.html",
         {
             'registrado': registrado, 
-            'table1':listaAsignaturas1,
-            'table2':listaAsignaturas2,
-            'table3':listaAsignaturas3Comun,
-            'table4':listaAsignaturas3CSI,
-            'table5':listaAsignaturas3IC,
-            'table6':listaAsignaturas3IS,
-            'table7':listaAsignaturas3SI,
-            'table8':listaAsignaturas3TI,
-            'table9':listaAsignaturas4CSI,
-            'table10':listaAsignaturas4IC,
-            'table11':listaAsignaturas4IS,
-            'table12':listaAsignaturas4SI,
-            'table13':listaAsignaturas4TI,
-            'table14':listaAsignaturas4PETFG
+            'tablas': tablas,
+            'numerotablas': tablas.__len__()
         }
     )
 

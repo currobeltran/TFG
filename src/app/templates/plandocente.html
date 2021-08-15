@@ -7,98 +7,98 @@
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 1º</h3>
-    <div class="mt-3" id="tablilla1">
+    <div class="mt-3" id="listaAsignaturas1">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 2º</h3>
-    <div class="mt-3" id="tablilla2">
+    <div class="mt-3" id="listaAsignaturas2">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 3º Comunes</h3>
-    <div class="mt-3" id="tablilla3">
+    <div class="mt-3" id="listaAsignaturas3Comun">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 3º Computación y Sistemas Inteligentes</h3>
-    <div class="mt-3" id="tablilla4">
+    <div class="mt-3" id="listaAsignaturas3CSI">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 3º Ingeniería de Computadores</h3>
-    <div class="mt-3" id="tablilla5">
+    <div class="mt-3" id="listaAsignaturas3IC">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 3º Ingeniería del Software</h3>
-    <div class="mt-3" id="tablilla6">
+    <div class="mt-3" id="listaAsignaturas3IS">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 3º Sistemas de Información</h3>
-    <div class="mt-3" id="tablilla7">
+    <div class="mt-3" id="listaAsignaturas3SI">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 3º Tecnologías de la Información</h3>
-    <div class="mt-3" id="tablilla8">
+    <div class="mt-3" id="listaAsignaturas3TI">
         
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 4º Computación y Sistemas Inteligentes</h3>
-    <div class="mt-3" id="tablilla9">
+    <div class="mt-3" id="listaAsignaturas4CSI">
 
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 4º Ingeniería de Computadores</h3>
-    <div class="mt-3" id="tablilla10">
+    <div class="mt-3" id="listaAsignaturas4IC">
 
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 4º Ingeniería del Software</h3>
-    <div class="mt-3" id="tablilla11">
+    <div class="mt-3" id="listaAsignaturas4IS">
 
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 4º Sistemas de Información</h3>
-    <div class="mt-3" id="tablilla12">
+    <div class="mt-3" id="listaAsignaturas4SI">
 
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Asignaturas 4º Tecnologías de la Información</h3>
-    <div class="mt-3" id="tablilla13">
+    <div class="mt-3" id="listaAsignaturas4TI">
 
     </div>
 </div>
 
 <div class="mt-5 ms-3">
     <h3>Prácticas de Empresa y TFG</h3>
-    <div class="mt-3" id="tablilla14">
+    <div class="mt-3" id="listaAsignaturas4PETFG">
 
     </div>
 </div>
@@ -138,7 +138,7 @@
         }
     }
 
-    var infoGeneral = [
+    var configuracion = [
         {
             title:"Información General",
             columns:[
@@ -269,132 +269,21 @@
             ]
         }
     ]
+    
+    let diccionario = {{ tablas|safe }}
 
-    var tabla1 = new Tabulator(
-        "#tablilla1",
-        {
-            data:{{ table1|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
+    for (let clave in diccionario) {
+        let selector = "#" + clave
 
-    var tabla2 = new Tabulator(
-        "#tablilla2",
-        {
-            data:{{ table2|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla3 = new Tabulator(
-        "#tablilla3",
-        {
-            data:{{ table3|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla4 = new Tabulator(
-        "#tablilla4",
-        {
-            data:{{ table4|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla5 = new Tabulator(
-        "#tablilla5",
-        {
-            data:{{ table5|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla6 = new Tabulator(
-        "#tablilla6",
-        {
-            data:{{ table6|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla7 = new Tabulator(
-        "#tablilla7",
-        {
-            data:{{ table7|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla8 = new Tabulator(
-        "#tablilla8",
-        {
-            data:{{ table8|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla9 = new Tabulator(
-        "#tablilla9",
-        {
-            data:{{ table9|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla10 = new Tabulator(
-        "#tablilla10",
-        {
-            data:{{ table10|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla11 = new Tabulator(
-        "#tablilla11",
-        {
-            data:{{ table11|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla12 = new Tabulator(
-        "#tablilla12",
-        {
-            data:{{ table12|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla13 = new Tabulator(
-        "#tablilla13",
-        {
-            data:{{ table13|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
-
-    var tabla14 = new Tabulator(
-        "#tablilla14",
-        {
-            data:{{ table14|safe }},
-            layout:"fitDataStretch",
-            columns:infoGeneral
-        }
-    )
+        new Tabulator(
+            selector,
+            {
+                data:diccionario[clave],
+                layout:"fitDataStretch",
+                columns:configuracion
+            }
+        )
+    }
 </script>
 
 {% endblock %}
