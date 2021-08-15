@@ -5,10 +5,8 @@ from django.http import JsonResponse
 from .models import ObtenerRegistros
 from .forms import *
 from .utils import *
-import plotly.offline as plotly
 import numpy as np
 from sklearn.linear_model import LinearRegression
-import plotly.graph_objs as go
 import csv
 from io import StringIO
 from django.views.generic import ListView

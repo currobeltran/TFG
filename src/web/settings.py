@@ -46,11 +46,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
 
-    'plotly',
     'numpy',
     'django_tables2',
-
-    'dbbackup',  # django-dbbackup
 ]
 
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
