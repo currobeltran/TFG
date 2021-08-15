@@ -19,8 +19,6 @@ import os
 from django.apps import apps
 
 # Inicio: Vista inicial de la aplicación
-# TODO: Añadir un parámetro al renderizado de index.html para que se pueda
-# personalizar el mensaje que aparece
 def inicio(request):
     registrado = estaRegistrado(request)
     return render(request, 'index.html', {'registrado':registrado, 'msg':"Bienvenido a la aplicación"})
@@ -35,11 +33,6 @@ def inicio(request):
 # para una o varias asignaturas concretas. Además, la información de los grupos que 
 # se desea visualizar en la tabla o gráfica puede ser cambiada, para ver solo los 
 # datos que nos interesen.
-# 
-# TODO:
-#   - Introducir el modo gráfica.
-#   - Especificar mejor las características de la visualización de la información que
-#     se desea.
 def buscadorBBDD(request):
     registrado = estaRegistrado(request)
     if request.method == "GET":
@@ -74,7 +67,6 @@ def buscadorBBDD(request):
         listadatos = []
         listaaños = []
         modoSeleccionado = request.POST.get('customRadio')
-        datoAMirar = infobusqueda[infobusqueda.__len__()-1]
 
         for i in a:
             if modoSeleccionado == 'tabla':
@@ -123,43 +115,74 @@ def buscadorBBDD(request):
                             listadatos.append(elemento)
 
             else:
-                # Seleccionar año de búsqueda
-                elemento = {}
-                elemento['label'] = a[i].get('Nombre')
-                añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
-                grupos = []
-                datosGrafica = []
-                cantidad = 0
-
-                for j in añosbusqueda:
-                    for añoasig in añosAsignatura:
-                        if str(añoasig.Año) == str(j):
-                            grupos = ObtenerGruposAño(añoasig.ID)
-
-                    cantidad = 0
-                    # Seleccionar grupos de año
-                    for g in grupos:
-                        if 'Nuevos' in infobusqueda:
-                            cantidad += g.Nuevos
-                        elif 'Repetidores' in infobusqueda:
-                            cantidad += g.Repetidores
-                        elif 'Retenidos' in infobusqueda:
-                            cantidad += g.Retenidos
-                        elif 'Plazas' in infobusqueda:
-                            cantidad += g.Plazas
-                        elif 'LibreConfiguracion' in infobusqueda:
-                            cantidad += g.LibreConfiguracion
-                        elif 'OtrosTitulos' in infobusqueda:
-                            cantidad += g.OtrosTitulos
+                # Ordenamos la información de manera que cada
+                # línea de la gráfica se corresponda con un valor
+                # concreto de los seleccionados para una asignatura concreta
+                #
+                # Para todos los valores que se desean consultar:
+                for elementoABuscar in infobusqueda:
+                    elemento = {}
                     
-                    datosGrafica.append(cantidad)
-                
-                elemento['data'] = datosGrafica
-                valorR = random.randint(0,255)
-                valorG = random.randint(0,255)
-                valorB = random.randint(0,255)
-                elemento['backgroundColor'] = 'rgba('+str(valorR)+','+str(valorG)+','+str(valorB)+', 0.2)'
-                listadatos.append(elemento)
+                    # Establecemos como etiqueta el nombre de la asignatura y el parámetro consultado
+                    elemento['label'] = "Alumnos " + elementoABuscar + " en " + a[i].get('Nombre')
+
+                    # Obtenemos todos los objetos añoAsignaturas asociados a esta asignatura
+                    añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
+
+                    # Declaramos variables vacias que se rellenarán en el siguiente bucle
+                    grupos = []
+                    datosGrafica = []
+                    cantidad = 0
+
+                    # Para cada año seleccionado en el formulario:
+                    for j in añosbusqueda:
+                        # Para todos los años de la asignatura actual:
+                        for añoasig in añosAsignatura:
+                            # Si el año de busqueda actual (j) 
+                            # es igual al año de la asignatura actual (añoasig) 
+                            # obtenemos los grupos de dicho año para dicha asignatura
+                            if str(añoasig.Año) == str(j):
+                                grupos = ObtenerGruposAño(añoasig.ID)
+
+                        cantidad = 0
+                        # Para todos los grupos:
+                        for g in grupos:
+                            # Si el parámetro de búsqueda es igual a uno de los siguientes:
+                                # se suma el valor del parámetro dentro del grupo actual a la variable cantidad
+                            if 'Nuevos' == elementoABuscar:
+                                cantidad += g.Nuevos
+                            elif 'Repetidores' == elementoABuscar:
+                                cantidad += g.Repetidores
+                            elif 'Retenidos' == elementoABuscar:
+                                cantidad += g.Retenidos
+                            elif 'Plazas' == elementoABuscar:
+                                cantidad += g.Plazas
+                            elif 'LibreConfiguracion' == elementoABuscar:
+                                cantidad += g.LibreConfiguracion
+                            elif 'OtrosTitulos' == elementoABuscar:
+                                cantidad += g.OtrosTitulos
+                        
+                        # cantidad tiene como valor el número de alumnos totales 
+                        # de un parámetro determinado en un único año académico de 
+                        # de una asignatura concreta
+                        datosGrafica.append(cantidad)
+                    
+                    # datosGrafica contiene la serie de valores de un parámetro determinado
+                    # para una asignatura concreta durante los años seleccionados
+                    elemento['data'] = datosGrafica
+
+                    # Se configuran los colores de las líneas que tendrán estas series de 
+                    # valores dentro de la gráfica
+                    valorR = random.randint(0,255)
+                    valorG = random.randint(0,255)
+                    valorB = random.randint(0,255)
+                    elemento['borderColor'] = 'rgba('+str(valorR)+','+str(valorG)+','+str(valorB)+', 1)'
+                    elemento['backgroundColor'] = 'rgba(255,255,255,0)'
+
+                    # Se incorpora el elemento con toda la información recogida anteriormente
+                    # a la lista que tendrá todos los datos correspondientes a la gráfica que
+                    # se va a crear
+                    listadatos.append(elemento)
 
         if modoSeleccionado == 'tabla':
             return render(request, "resultadobusqueda.html", {
@@ -167,6 +190,9 @@ def buscadorBBDD(request):
                 'listadatos': listadatos
             })
         else:
+            # Se genera una lista de años que se colocará en el eje x de la gráfica
+            # Dicha lista será formateada y ordenada para que el año más antiguo aparezca
+            # más cercano al eje y
             for j in añosbusqueda:
                 año1 = j[0] + j[1] + j[2] + j[3]
                 año2 = j[4] + j[5] + j[6] + j[7]
@@ -175,8 +201,10 @@ def buscadorBBDD(request):
                 listaaños.append(añoelemento)
             
             listaaños.sort()
-            return render(request,'grafica.html', {'data': listadatos, 'datoAMirar':datoAMirar, 'listaAños':listaaños, 'registrado':registrado})
+            return render(request,'grafica.html', {'data': listadatos, 'listaAños':listaaños, 'registrado':registrado})
 
+# planDocente: Vista que genera las tablas correspondientes
+# a un plan de ordenación docente
 def planDocente(request):
     registrado = estaRegistrado(request)
     asignaturas = Asignatura.objects.values()

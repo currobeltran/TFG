@@ -1,11 +1,19 @@
 {% extends 'index.html' %}
 
 {% block central %}
-    <div class="row mt-4 ms-2">
-      <h2>{{ datoAMirar }}</h2>
-    </div>
+  <div class="row mt-4 ms-4">
+    <h2>Resultado de la búsqueda con gráfica</h2>
+    <p class="mt-2 col-8">
+      Nota: Si pulsa en uno de los cuadrados que aparecen en la leyenda, 
+      la asignatura a la que corresponda aparecerá o desaparecerá de la 
+      gráfica. Si coloca el ratón en cualquiera de los puntos de la gráfica,
+      aparecerá información detallada sobre el mismo.
+    </p>
+  </div>
 
-	<canvas id="graficaSolicitada" class="mt-2 ms-2"></canvas>
+  <div class="col-8 mt-3 ms-4">
+    <canvas id="graficaSolicitada"></canvas>
+  </div>
 
     <script>
       var ctx = document.getElementById('graficaSolicitada').getContext('2d');
