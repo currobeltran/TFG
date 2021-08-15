@@ -73,17 +73,14 @@ def buscadorBBDD(request):
                 añosAsignatura = ObtenerAñosAsignatura(a[i].get('PK'))
 
                 for j in añosbusqueda:
-                    año1 = j[0] + j[1] + j[2] + j[3]
-                    año2 = j[4] + j[5] + j[6] + j[7]
-                    
-                    añoelemento = año1 + "/" + año2
+                    añoelemento = formatearAnio(j)
 
                     for añoasig in añosAsignatura:
                         if str(añoasig.Año) == str(j):
                             elemento = {}
                             elemento['nombre'] = a[i].get('Nombre')
                             elemento['año'] = añoelemento
-                            elemento['id'] = a[i].get('PK')+año1+año2
+                            elemento['id'] = a[i].get('PK')+j
 
                             grupos = ObtenerGruposAño(añoasig.ID)
 
@@ -194,10 +191,7 @@ def buscadorBBDD(request):
             # Dicha lista será formateada y ordenada para que el año más antiguo aparezca
             # más cercano al eje y
             for j in añosbusqueda:
-                año1 = j[0] + j[1] + j[2] + j[3]
-                año2 = j[4] + j[5] + j[6] + j[7]
-                
-                añoelemento = año1 + "/" + año2
+                añoelemento = formatearAnio(j)
                 listaaños.append(añoelemento)
             
             listaaños.sort()
@@ -844,15 +838,15 @@ def predicciones(request):
         añosUnicos = ObtenerAñosUnicos()
         añoActual = añosUnicos[añosUnicos.__len__()-1]
         añoActual = str(añoActual)
-        añoActual = añoActual[0] + añoActual[1] + añoActual[2] + añoActual[3] + "/" + añoActual[4] + añoActual[5] + añoActual[6] + añoActual[7]
+        añoActual = formatearAnio(añoActual)
 
         añoProximo = añosUnicos[añosUnicos.__len__()-1] + 10001
         añoProximo = str(añoProximo)
-        añoProximo = añoProximo[0] + añoProximo[1] + añoProximo[2] + añoProximo[3] + "/" + añoProximo[4] + añoProximo[5] + añoProximo[6] + añoProximo[7]
+        añoProximo = formatearAnio(añoProximo)
 
         añoProximo2 = añosUnicos[añosUnicos.__len__()-1] + 20002
         añoProximo2 = str(añoProximo2)
-        añoProximo2 = añoProximo2[0] + añoProximo2[1] + añoProximo2[2] + añoProximo2[3] + "/" + añoProximo2[4] + añoProximo2[5] + añoProximo2[6] + añoProximo2[7]
+        añoProximo2 = formatearAnio(añoProximo2)
 
         # Obtención de datos y regresión lineal
         añosAsignatura = ObtenerAñosAsignatura(pkAsignatura)
@@ -888,10 +882,7 @@ def predicciones(request):
         listaaños = [] 
         for j in añosUnicos:
             j = str(j)
-            año1 = j[0] + j[1] + j[2] + j[3]
-            año2 = j[4] + j[5] + j[6] + j[7]
-            
-            añoelemento = año1 + "/" + año2
+            añoelemento = formatearAnio(j)
             listaaños.append(añoelemento)
         
         listaaños.append(añoProximo)
