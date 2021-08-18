@@ -799,7 +799,7 @@ def predicciones(request):
         for i in añosAsignatura:
             matriculas.append(i.Matriculados)
 
-        x = np.array(range(0,añosUnicos.__len__())).reshape((-1,1))
+        x = np.array(range(0,añosUnicos.__len__())).reshape(-1,1)
         y = np.array(matriculas)
         modelo = LinearRegression().fit(x,y)
 

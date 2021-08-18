@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'allauth.account',
 
     'numpy',
-    'django_tables2',
 ]
 
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
