@@ -3,22 +3,37 @@
 {% block central %}
     <h2 class="row mt-4 ms-5">Menú de predicciones</h2>
     <p class="col-6 mt-2 ms-5">
-        En el siguiente menú podrá escoger una asignatura de 
+        En el siguiente menú podrá escoger una o varias asignaturas de 
         la cual desee conocer el número estimado de alumnos para 
         el próximo curso universitario teniendo en cuenta los datos
-        de matriculación de años anteriores.
+        de matriculación de años anteriores. Primero escoja el semestre
+        y posteriormente aparecerán las asignaturas correspondientes al mismo.
     </p>
-    
+    <div class="row col-6">
+        <select class="ms-5 form-control" id="seleccionsemestre" name="seleccionsemestre">
+            <option selected disabled>Seleccione un semestre</option>
+            <option value="1">1ºSemestre</option>
+            <option value="2">2ºSemestre</option>
+            <option value="3">3ºSemestre</option>
+            <option value="4">4ºSemestre</option>
+            <option value="5">5ºSemestre</option>
+            <option value="6">6ºSemestre</option>
+            <option value="7">7ºSemestre</option>
+            <option value="8">8ºSemestre</option>
+        </select>
+
+    </div>
+
     <form class="mt-5 ms-5" action="/predicciones" method="POST">
         {% csrf_token %}
         <div class="row col-6">
-            <ul class="check-group list-group-flush scroll-list">
+            <ul class="check-group list-group-flush scroll-list" id="listaAsignaturasPrediccion">
                 {% for asignatura in asignaturas %}
                     <li class="check-group-item">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" value="{{ asignatura.id }}" id="{{ asignatura.id }}" name="asignatura">
-                            <label class="form-check-label" for="{{ asignatura.id }}">
-                                {{ asignatura.nombre }}
+                            <input class="form-check-input" type="checkbox" value="{{ asignatura.PK }}" id="{{ asignatura.PK }}" name="asignaturas[]">
+                            <label class="form-check-label" for="{{ asignatura.PK }}">
+                                {{ asignatura.Nombre }}
                             </label>
                         </div>
                     </li>

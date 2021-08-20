@@ -438,6 +438,15 @@ def apibuscaBBDD(request):
 
     return JsonResponse(data)
 
+def apiBuscaAsignaturasPorSemestre(request):
+    x = ObtenerAsignaturasPorSemestre(request.GET.get('semestre'))
+    data = {}
+
+    for i in range(x.__len__()):
+        data[i] = {'PK': x[i].PK,'Nombre': x[i].Nombre}
+
+    return JsonResponse(data)
+
 # CopiaSeguridad: Vista para realizar y restaurar 
 # una copia de seguridad de la información almacenada en la Base de Datos.
 def copiaSeguridad(request):
@@ -773,13 +782,15 @@ def predicciones(request):
     registrado = estaRegistrado(request)
 
     if request.method == "GET":
-        asg = ObtenerRegistros("Asignatura")
-        return render(request, 'predicciones.html', {'registrado':registrado, 'asignaturas':asg})
+        return render(request, 'predicciones.html', {'registrado':registrado})
     
     else:
         # Obtención de asignatura seleccionada y lista de años
-        pkAsignatura = request.POST.get('asignatura')
-        asg = ObtenerElemento('Asignatura',pkAsignatura)
+        pkAsignaturas = request.POST.getlist('asignaturas[]')
+        vectorAsignaturas = []
+        for i in pkAsignaturas:
+            vectorAsignaturas.append(ObtenerElemento('Asignatura',i))
+        
         añosUnicos = ObtenerAñosUnicos()
         añoActual = añosUnicos[añosUnicos.__len__()-1]
         añoActual = str(añoActual)
@@ -793,36 +804,90 @@ def predicciones(request):
         añoProximo2 = str(añoProximo2)
         añoProximo2 = formatearAnio(añoProximo2)
 
-        # Obtención de datos y regresión lineal
-        añosAsignatura = ObtenerAñosAsignatura(pkAsignatura)
-        matriculas = []
-        for i in añosAsignatura:
-            matriculas.append(i.Matriculados)
-
-        x = np.array(range(0,añosUnicos.__len__())).reshape(-1,1)
-        y = np.array(matriculas)
-        modelo = LinearRegression().fit(x,y)
-
-        precision = round(modelo.score(x,y),2)
-
-        # Creación de datos correspondientes a la generación de la gráfica
-        puntosGrafica = matriculas
-        for i in range(añosUnicos.__len__(),añosUnicos.__len__()+2):
-            elemento = modelo.predict([[i]])
-            puntosGrafica.append(elemento[0])
-
         infoGrafica = []
-        elementoInfoGrafica = {}
-        elementoInfoGrafica['label'] = asg.Nombre
+        tablasActual = []
+        tablasPrediccion = []
+        arrayPrecision = []
+        nombresAsignaturas = []
+        # Obtención de datos y regresión lineal
+        for asg in vectorAsignaturas:
+            nombresAsignaturas.append(asg.Nombre)
+            print(asg.Nombre)
 
-        elementoInfoGrafica['data'] = puntosGrafica
+            añosAsignatura = ObtenerAñosAsignatura(asg.PK)
+            matriculas = []
+            for i in añosAsignatura:
+                matriculas.append(i.Matriculados)
 
-        valorR = random.randint(0,255)
-        valorG = random.randint(0,255)
-        valorB = random.randint(0,255)
-        elementoInfoGrafica['backgroundColor'] = 'rgba('+str(valorR)+','+str(valorG)+','+str(valorB)+', 0.2)'
-        
-        infoGrafica.append(elementoInfoGrafica)
+            x = np.array(range(0,añosUnicos.__len__())).reshape(-1,1)
+            y = np.array(matriculas)
+            modelo = LinearRegression().fit(x,y)
+
+            precision = round(modelo.score(x,y),2)
+            arrayPrecision.append(precision)
+
+            # Creación de datos correspondientes a la generación de la gráfica
+            puntosGrafica = matriculas
+            for i in range(añosUnicos.__len__(),añosUnicos.__len__()+2):
+                elemento = modelo.predict([[i]])
+                puntosGrafica.append(elemento[0])
+
+            elementoInfoGrafica = {}
+            elementoInfoGrafica['label'] = asg.Nombre
+
+            elementoInfoGrafica['data'] = puntosGrafica
+
+            valorR = random.randint(0,255)
+            valorG = random.randint(0,255)
+            valorB = random.randint(0,255)
+            elementoInfoGrafica['backgroundColor'] = 'rgba('+str(valorR)+','+str(valorG)+','+str(valorB)+', 0.2)'
+            
+            infoGrafica.append(elementoInfoGrafica)
+
+            # Generación de tabla actual
+            elementoTablaActual = {
+                'Nombre':asg.Nombre,
+                'Matriculados':añosAsignatura[añosAsignatura.__len__()-1].Matriculados,
+                'GA':0,
+                'GR':0,
+                'Rat T':0,
+                'Rat P':0
+            }
+
+            añoAsignaturaActual = añosAsignatura[añosAsignatura.__len__()-1]
+            grupos = ObtenerGruposAño(añoAsignaturaActual.ID)
+            elementoTablaActual['GA'] = grupos.__len__()
+
+            gruposPequeños = 0
+            for g in grupos:
+                gruposPequeños += g.GruposReducidos
+
+            elementoTablaActual['GR'] = gruposPequeños
+
+            elementoTablaActual['Rat T'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/grupos.__len__(), 2)
+            elementoTablaActual['Rat P'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/gruposPequeños, 2)
+
+            # Generación de tabla predicción
+            matriculadosFuturos = modelo.predict([[añosAsignatura.__len__()]])
+            matriculadosFuturos = round(matriculadosFuturos[0])
+
+            tablasActual.append(elementoTablaActual)
+
+            elementoTablaPrediccion = {
+                'Nombre':asg.Nombre,
+                'Matriculados':matriculadosFuturos,
+                'GA':elementoTablaActual['GA'],
+                'GR':elementoTablaActual['GR'],
+                'Rat T':0,
+                'Rat P':0
+            }
+
+            elementoTablaPrediccion['Rat T'] = round(matriculadosFuturos/grupos.__len__(), 2)
+            elementoTablaPrediccion['Rat P'] = round(matriculadosFuturos/gruposPequeños, 2)
+
+            tablasPrediccion.append(elementoTablaPrediccion)
+
+        listaDatosPrecisionNombre = zip(nombresAsignaturas,arrayPrecision)
 
         listaaños = [] 
         for j in añosUnicos:
@@ -835,57 +900,17 @@ def predicciones(request):
 
         listaaños.sort()
 
-        # Generación de tabla actual
-        datosTablaActual = [{
-            'Nombre':asg.Nombre,
-            'Matriculados':añosAsignatura[añosAsignatura.__len__()-1].Matriculados,
-            'GA':0,
-            'GR':0,
-            'Rat T':0,
-            'Rat P':0
-        }]
-
-        añoAsignaturaActual = añosAsignatura[añosAsignatura.__len__()-1]
-        grupos = ObtenerGruposAño(añoAsignaturaActual.ID)
-        datosTablaActual[0]['GA'] = grupos.__len__()
-
-        gruposPequeños = 0
-        for g in grupos:
-            gruposPequeños += g.GruposReducidos
-
-        datosTablaActual[0]['GR'] = gruposPequeños
-
-        datosTablaActual[0]['Rat T'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/grupos.__len__(), 2)
-        datosTablaActual[0]['Rat P'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/gruposPequeños, 2)
-
-        # Generación de tabla predicción
-        matriculadosFuturos = modelo.predict([[añosAsignatura.__len__()]])
-        matriculadosFuturos = round(matriculadosFuturos[0])
-
-        datosTablaPrediccion = [{
-            'Nombre':asg.Nombre,
-            'Matriculados':matriculadosFuturos,
-            'GA':datosTablaActual[0]['GA'],
-            'GR':datosTablaActual[0]['GR'],
-            'Rat T':0,
-            'Rat P':0
-        }]
-
-        datosTablaPrediccion[0]['Rat T'] = round(matriculadosFuturos/grupos.__len__(), 2)
-        datosTablaPrediccion[0]['Rat P'] = round(matriculadosFuturos/gruposPequeños, 2)
-
         return render(
             request,
             'resultadoprediccion.html',
             {
                 'registrado':registrado,
-                'nombreAsignatura':asg.Nombre,
+                'listaDatos':listaDatosPrecisionNombre,
                 'cursoProximo':añoProximo,
                 'cursoActual':añoActual,
-                'precision':precision,
                 'data':infoGrafica,
                 'listaAños':listaaños,
-                'tabla1':datosTablaActual,
-                'tabla2':datosTablaPrediccion
+                'tabla1':tablasActual,
+                'tabla2':tablasPrediccion
             }
         )

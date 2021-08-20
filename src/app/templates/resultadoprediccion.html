@@ -5,8 +5,15 @@
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
 
     <div class="row ms-5 mt-3">
-        <h3 class="row mt-2">{{ nombreAsignatura }} - {{ cursoProximo }}</h3>
-        <p class="row mt-2">Coeficiente de determinación de la regresión lineal: {{ precision }}</p>
+        <h3 class="row mt-2">Estimaciones para el curso {{ cursoProximo }}</h3>
+        <p class="row mt-2">Coeficientes de determinación de las regresiones lineales:</p>
+        <ul class="row">
+            {% for nr in listaDatos %}
+                <li>
+                    {{ nr.0 }}: {{ nr.1 }}
+                </li>
+            {% endfor %}
+        </ul>
         <p class="row">(A partir del año presente en el título se sigue la predicción de la regresión lineal)</p>
     </div>
 

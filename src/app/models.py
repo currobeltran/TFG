@@ -153,6 +153,32 @@ def ObtenerElemento(tabla, id):
 
     return ''
 
+def ObtenerAsignaturasPorSemestre(semestre):
+    if semestre == "1":
+        x = Asignatura.objects.filter(Curso=1,Semestre=1)
+        return x
+    if semestre == "2":
+        x = Asignatura.objects.filter(Curso=1,Semestre=2)
+        return x
+    if semestre == "3":
+        x = Asignatura.objects.filter(Curso=2,Semestre=1)
+        return x
+    if semestre == "4":
+        x = Asignatura.objects.filter(Curso=2,Semestre=2)
+        return x
+    if semestre == "5":
+        x = Asignatura.objects.filter(Curso=3,Semestre=1)
+        return x
+    if semestre == "6":
+        x = Asignatura.objects.filter(Curso=3,Semestre=2)
+        return x
+    if semestre == "7":
+        x = Asignatura.objects.filter(Curso=4,Semestre=1)
+        return x
+    if semestre == "8":
+        x = Asignatura.objects.filter(Curso=4,Semestre=2)
+        return x
+
 def ObtenerAñoAsignaturaUnico(pk,curso):
     return AñoAsignatura.objects.get(PK=pk,Año=curso)
 
