@@ -128,27 +128,45 @@ def ObtenerRegistros(tabla):
 
 def ObtenerElemento(tabla, id):
     if tabla == "Asignatura":
-        x = Asignatura.objects.get(PK=id)
+        try:
+            x = Asignatura.objects.get(PK=id)
+        except:
+            x = ''
         return x
 
     elif tabla == "Área":
-        x = Area.objects.get(ID=id)
+        try:
+            x = Area.objects.get(ID=id)
+        except:
+            x = ''
         return x
 
     elif tabla == "Mención":
-        x = Mencion.objects.get(ID=id)
+        try:
+            x = Mencion.objects.get(ID=id)
+        except:
+            x = ''
         return x
 
     elif tabla == "Título":
-        x = Titulo.objects.get(ID=id)
+        try:
+            x = Titulo.objects.get(ID=id)
+        except:
+            x = ''
         return x
 
     elif tabla == "Año asignatura":
-        x = AñoAsignatura.objects.get(ID=id)
+        try:
+            x = AñoAsignatura.objects.get(ID=id)
+        except:
+            x = ''
         return x
 
     elif tabla == "Grupo":
-        x = Grupo.objects.get(ID=id)
+        try:
+            x = Grupo.objects.get(ID=id)
+        except:
+            x = ''
         return x
 
     return ''
@@ -180,7 +198,12 @@ def ObtenerAsignaturasPorSemestre(semestre):
         return x
 
 def ObtenerAñoAsignaturaUnico(pk,curso):
-    return AñoAsignatura.objects.get(PK=pk,Año=curso)
+    try:
+        ret = AñoAsignatura.objects.get(PK=pk,Año=curso)
+    except:
+        ret = ''
+
+    return ret
 
 def ObtenerAñosUnicos():
     ret = []
