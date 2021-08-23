@@ -44,3 +44,22 @@ class AsignaturaModelTests(TestCase):
 
         self.assertEqual(ObtenerElemento("Asignatura","2961199424A60"), '')
         self.assertEqual("2961199424A61", nuevaAsg.PK)
+
+        ModificaAsignatura(
+            id=nuevaAsg.PK,
+            pkdif=nuevaAsg.PKDif,
+            nombre=nuevaAsg.Nombre,
+            acronimo=nuevaAsg.Acronimo,
+            creditosgr=nuevaAsg.CreditosGR,
+            creditosga=2.0,
+            idasiganterior=0,
+            curso=nuevaAsg.Curso,
+            codigo=nuevaAsg.Codigo,
+            semestre=nuevaAsg.Semestre,
+            tipoasig=nuevaAsg.TipoAsignatura,
+            idmencion=1
+        )
+
+        segundaAsg = Asignatura.objects.get(PK="2961199424A61")
+
+        self.assertEqual(2.0, segundaAsg.CreditosGA)

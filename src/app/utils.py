@@ -109,6 +109,9 @@ def aniadeAsignaturaInformaticaAPlanDocente(tablas, asig, elemento):
             
         elif mencion == "05":
             aniadeElementoPlanDocente(tablas,'listaAsignaturas4TI',elemento)
+        
+        elif mencion == "99":
+            aniadeElementoPlanDocente(tablas,'listaAsignaturas4Comunes',elemento)
 
     return tablas
 
