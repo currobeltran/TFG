@@ -25,17 +25,17 @@ class BusquedaDeDatosTest(TestCase):
         AñoAsignatura.objects.create(
             PK=Asignatura.objects.get(PK="2961199424A60"),
             Año=20192020,
-            Matriculados=2
+            Matriculados=3
         )
         AñoAsignatura.objects.create(
             PK=Asignatura.objects.get(PK="2961199424A60"),
             Año=20202021,
-            Matriculados=2
+            Matriculados=3
         )
         AñoAsignatura.objects.create(
             PK=Asignatura.objects.get(PK="2961199424A60"),
             Año=20212022,
-            Matriculados=2
+            Matriculados=3
         )
         Grupo.objects.create(
             IDAñoAsignatura=AñoAsignatura.objects.get(Año=20192020),
@@ -109,4 +109,13 @@ class BusquedaDeDatosTest(TestCase):
         response = self.client.post('/plandocente/')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['numerotablas'], '')
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['AlumnosActualesactual'], 3)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['GruposGrandesactual'], 1)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['GruposReducidosactual'], 1)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['RatioTeoriaactual'], 3)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['RatioPracticasactual'], 3)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['Diferencia'], 0)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['IncrementoTeoria'], 0)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['IncrementoPractica'], 0)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['IncrementoTotal'], 0)
+        self.assertEqual(response.context['tablas']['listaAsignaturas4Comunes'][0]['Creditos'], 6)
