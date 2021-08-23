@@ -398,6 +398,8 @@ def infomasivaBBDD(request):
                     nuevosMatriculados = RecalculoDeMatriculados(idañoasig)
                     ModificaMatriculadosAñoAsignatura(idañoasig,nuevosMatriculados)
 
+            return render(request, 'index.html', {'registrado':registrado, 'msg':"Archivo cargado en la base de datos"})
+
     return render(request, 'infomasiva.html', {'registrado':registrado,'form':form})
 
 # Editaindividual: Vista para la edición de información individual.
@@ -865,7 +867,8 @@ def predicciones(request):
             elementoTablaActual['GR'] = gruposPequeños
 
             elementoTablaActual['Rat T'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/grupos.__len__(), 2)
-            elementoTablaActual['Rat P'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/gruposPequeños, 2)
+            if(gruposPequeños!=0):
+                elementoTablaActual['Rat P'] = round(añosAsignatura[añosAsignatura.__len__()-1].Matriculados/gruposPequeños, 2)
 
             # Generación de tabla predicción
             matriculadosFuturos = modelo.predict([[añosAsignatura.__len__()]])
@@ -883,7 +886,8 @@ def predicciones(request):
             }
 
             elementoTablaPrediccion['Rat T'] = round(matriculadosFuturos/grupos.__len__(), 2)
-            elementoTablaPrediccion['Rat P'] = round(matriculadosFuturos/gruposPequeños, 2)
+            if(gruposPequeños!=0):
+                elementoTablaPrediccion['Rat P'] = round(matriculadosFuturos/gruposPequeños, 2)
 
             tablasPrediccion.append(elementoTablaPrediccion)
 
