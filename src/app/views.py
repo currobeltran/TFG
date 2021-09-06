@@ -10,7 +10,6 @@ from sklearn.linear_model import LinearRegression
 import csv
 from io import StringIO
 from django.views.generic import ListView
-from django_tables2 import SingleTableView
 import random
 import datetime
 import time
