@@ -2,7 +2,6 @@ from django.db import models
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 import math
-import django_tables2 as tables
 
 class Asignatura(models.Model):
     OPCIONES_TIPO_ASIGNATURA = [
